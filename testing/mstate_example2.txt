@@ -1,0 +1,13 @@
+library(mstate)
+data(ebmt4)
+ebmt <- ebmt4
+tmat <- transMat(x = list(c(2, 3, 5, 6), c(4, 5, 6), c(4, 5, 6), c(5, 6),c(), c()), names = c("Tx", "Rec", "AE", "Rec+AE", "Rel", "Death"))
+msebmt <- msprep(data = ebmt, trans = tmat, time = c(NA, "rec", "ae","recae", "rel", "srv"), status = c(NA, "rec.s", "ae.s", "recae.s","rel.s", "srv.s"), keep = c("match", "proph", "year", "agecl"))
+#covs <- c("match", "proph", "year", "agecl")
+#msebmt <- expand.covs(msebmt, covs, longnames = FALSE)
+#msebmt[, c("Tstart", "Tstop", "time")] <- msebmt[, c("Tstart","Tstop", "time")]/365.25
+
+c0 <- coxph(Surv(Tstart, Tstop, status) ~ strata(trans), data = msebmt,method = "breslow")
+msf0 <- msfit(object = c0, vartype = "greenwood", trans = tmat)
+pt0 <- probtrans(msf0, predt = 0, method = "greenwood")
+plot(pt0,type="single")

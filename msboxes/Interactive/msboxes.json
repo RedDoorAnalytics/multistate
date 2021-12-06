@@ -1,0 +1,15 @@
+msboxes = {
+"Nstates":3,
+"Ntransitions":3,
+"xvalues": [.1,.6,.35],
+"yvalues": [.85,.85,.35],
+"ymin":0,
+"ymax":1,
+"xmin":0,
+"xmax":1,
+"boxwidth":.2,
+"boxheight":.3,
+"statenames": ["Surgery","Recurrence","Dead"],
+"arrows": {"x1":[.3,.2,.7],"y1":[.7,.5499999999999999,.5499999999999999],"x2":[.6,.45,.45],"y2":[.7,.35,.35]},
+"arrowstext": {"x":[.45,.345,.5549999999999999],"y":[.71,.45,.45]}
+}

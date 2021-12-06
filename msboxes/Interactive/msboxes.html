@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	
+    <title>Demo</title>
+    <!-- link href="CSS/bootstrap.min.css" rel="stylesheet"-->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">   
+	<link rel="stylesheet" type="text/css" href="CSS/msboxes.css"/> 
+	
+	</head>
+    <body>
+	<div class="container-fluid">
+        <div class="tabbable">
+            <ul class="nav nav-tabs">
+                <li class="nav-item"> <a class="atab" href="#a_tab" data-toggle="tab">Box Graph </a> </li>
+                <li class="nav-item"><a class="btab" href="#b_tab" data-toggle="tab">Stacked Plots </a></li>
+                 <li class="nav-item"><a class="ctab" href="#c_tab" data-toggle="tab">Hazard functions </a></li>
+           </ul>
+            <div class="tab-content">
+                <div class="tab-pane active" id="a_tab">
+					<div class="row">
+						<div class="col-md-8">
+							<div id="GraphAreaBoxes"> </div>
+							<div class = "row" id="AllSlider">
+								<div class="col-md-1" id="colnomargin">
+									<div id="TimeSliderAllButtons"> 
+										<div id="TimeSliderButtonSpeed"> 
+											<form>
+												<input type="radio" class="radio-btn" name="speed" value=10000 id="slow" onClick="DurationChange()"> Slow </br>
+												<input type="radio" class="radio-btn" name="speed" value=5000 id="normal" checked onClick="DurationChange()"/> Normal</br>
+												<input type="radio" class="radio-btn" name="speed" value=100 id="fast" onClick="DurationChange()"/> Fast</br>
+											</form>
+										</div>		
+										<div id="TimeSliderButtonBoxes"> </div>
+									</div>	
+								</div>
+								<div class="col-md-11" id="colnomargin">
+									<div id="TimeSliderBoxes"> </div>
+								</div>
+							</div>	
+						</div>						
+
+						<div class="col-md-4">
+							<div id="RHSStacked">
+								<div class="col-md-6" id="HazardLHS" >
+									<!--div id="HazardBoxes1"> </div>
+									<div id="HazardBoxes2"> </div>
+									<div id="HazardBoxes3"> </div>
+									<div id="HazardBoxes4"> </div-->
+								</div>
+								<div class="col-md-6" id="HazardRHS" >
+									<!--div id="HazardBoxes5"> </div>
+									<div id="HazardBoxes6"> </div>
+									<div id="HazardBoxes7"> </div>
+									<div id="HazardBoxes8"> </div-->
+								</div>								
+							</div>
+						</div>
+					</div>	
+				</div>				
+                <div class="tab-pane" id="b_tab">
+					<div class="row">
+						<div class="col-md-8">
+							<div id="GraphAreaStacked"> </div>
+						</div>
+						<div class="col-md-4">
+							<div id="RHSStacked"> 
+								<div id="RadioButtons"> </div>
+							</div>
+						</div>
+					</div>	
+				</div>
+                <div class="tab-pane" id="c_tab">XXX
+
+				</div>				
+			</div>
+		</div>
+	</div>	
+	
+        <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+		<script src="d3/d3.min.js"></script>
+        <script src="js/bootstrap.bundle.min.js"></script>
+		<script src = "msboxes.json" ></script>
+		<script src = "msboxes_predictions.json" ></script>
+ 
+        <script>
+            $.ajaxSetup ({
+                // Disable caching of AJAX responses
+                // Used when debugging
+                cache: false
+            });
+        
+            $.getScript("msboxes.js");
+            $(".atab").click(function() {
+                $.getScript("msboxes.js");
+            })
+        </script>
+        <script>
+            $(".btab").click(function() {
+                $.getScript("msstacked.js");
+            })
+        </script>
+    </body>
+</html>

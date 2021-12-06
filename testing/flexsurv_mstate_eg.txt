@@ -1,0 +1,15 @@
+library(mstate)
+library(flexsurv)
+tmat <- rbind(c(NA,1,2),c(NA,NA,3),c(NA,NA,NA))
+
+cfcox <- coxph(Surv(Tstart, Tstop, status) ~ strata(trans), data=bosms3)
+mfcox <- msfit(cfcox, trans=tmat)
+
+ptc <- probtrans(mfcox, predt=0, direction="forward")[[1]]
+ptc[c(165, 193),]
+
+cfwei <- flexsurvreg(Surv(Tstart, Tstop, status) ~ trans + shape(trans),data=bosms3, dist="weibull")
+tgrid <- seq(0,15,by=0.1)
+mfwei <- msfit.flexsurvreg(cfwei, t=tgrid, trans=tmat)
+ptw <- probtrans(mfwei, predt=0, direction="forward")[[1]]
+ptw[ptw$time %in% c(5,10),]

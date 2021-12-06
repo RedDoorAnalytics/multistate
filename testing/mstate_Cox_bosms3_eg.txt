@@ -1,0 +1,13 @@
+library(mstate)
+library(flexsurv)
+data(bosms3)
+tmat <- rbind(c(NA,1,2),c(NA,NA,3),c(NA,NA,NA))
+cx <- coxph(Surv(Tstart,Tstop,status)~strata(trans),
+        data=bosms3,method="breslow")
+summary(cx)
+HvH <- msfit(cx,trans=tmat)
+# probtrans
+system.time(pt <- probtrans(HvH,predt=3,variance=T,covariance=T))
+# predictions from state 1
+plot(pt)
+

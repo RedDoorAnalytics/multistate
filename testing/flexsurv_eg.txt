@@ -1,0 +1,15 @@
+library(flexsurv)
+bexp <- flexsurvreg(Surv(years, status) ~ trans, data=bosms3, dist="exp")
+#bexp <- flexsurvspline(Surv(years, status) ~ trans, data=bosms3, k=2, scale="hazard")
+
+tmat <- rbind(c(NA,1,2),c(NA,NA,3),c(NA,NA,NA))
+
+# more likely to be dead (state 3) as time moves on, or if start with
+# BOS (state 2)
+
+#system.time(pmatrix.simfs(bexp, t=5.4, trans=tmat,M=1000))
+#system.time(pmatrix.simfs(bexp, t=10, trans=tmat,M=10000)))
+
+pmatrix.fs(bexp, t=10, trans=tmat)
+
+totlos.simfs(bexp, t=10, trans=tmat)
