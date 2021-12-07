@@ -2,6 +2,22 @@
 
 `multistate` provides a general framework for flexible parametric modelling of arbitrary multi-state survival models.
 
+
+## Installation
+
+The latest stable version of `multistate` can be installed with:
+
+```{stata}
+ssc install multistate
+```
+
+To install directly from this GitHub repository, use:
+
+```{stata}
+net install multistate, from("https://raw.githubusercontent.com/RedDoorAnalytics/multistate/main/")
+```
+
+
 Below are publications which have contributed to the development of the `multistate` package.
 
 > Weibull CE, Lambert PC, Eloranta S, Andersson TML, Dickman PW, Crowther MJ. A multi-state model incorporating estimation of excess hazards and multiple time scales. *Statistics in Medicine* 2021;40(9)2139-2154.
