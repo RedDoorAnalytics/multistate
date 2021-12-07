@@ -1,7 +1,10 @@
 // 
 // build new version of multistate package
 // --> run whole do file
+
+//!!
 // --> build in 15
+//!!
 
 local drive /Users/Michael/Documents/reddooranalytics/products/multistate
 cd `drive'
@@ -18,7 +21,7 @@ if `includemata' {
 	local newversion `newversion'_mata
 }
 cap mkdir ./release/version_`newversion'
-local fdir `drive'/multistate/release/version_`newversion'/
+local fdir `drive'/release/version_`newversion'/
 
 //===========================================================================//
 
