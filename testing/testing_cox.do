@@ -12,9 +12,8 @@ tr:do ./build/buildmlib.do
 mata mata clear
 
 
-local drive /Users/Michael/Documents
-//local drive c:
-cd "`drive'/multistate/multistate"
+local drive /Users/Michael/Documents/reddooranalytics/products/multistate
+cd "`drive'"
 adopath ++ "."
 adopath ++ "./msset"
 adopath ++ "./predictms"
@@ -83,4 +82,21 @@ predictms , transmat(tmat) 			///
 			at1(hormon 1 age 55) 	///
 			timevar(tvar) 			///
 
-twoway (line _prob* tvar) (line prob* tvar), legend(off)
+twoway (line _prob_at1_1_1 tvar)(line _prob_at1_1_2 tvar)(line _prob_at1_1_3 tvar) ///
+       (line prob_at1_1_1 tvar, connect(stairstep)) ///
+       (line prob_at1_1_2 tvar, connect(stairstep)) ///
+       (line prob_at1_1_3 tvar, connect(stairstep)) ///
+        , xtitle("Follow-up time")        ///
+        ytitle("Transition probability") ylabel(, angle(h) format(%2.1f)) ///
+        legend(order(1 "RP - Prob(Alive)" 4 "Cox - Prob(Alive)" ///
+        2 "RP - Prob(Relapsed)" 5 "Cox - Prob(Relapsed)" ///
+        3 "RP - Prob(Dead)" 6 "Cox - Prob(Dead)") pos(1) ring(0)) ///
+        title("Illness-death model using {stMono:multistate} in Stata")
+
+graph display, xsize(10) ysize(5)
+graph export "/Users/Michael/Desktop/illd.jpg", replace
+        
+        
+        
+        
+        
