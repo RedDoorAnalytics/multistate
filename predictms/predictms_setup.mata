@@ -20,28 +20,28 @@ mata:
 
 struct predictms_struct
 {
-	`ss' touse					//to post predictions
-	`RS' method					//0 simulation, 1 aj, 2 analytic illd, ...
-	`RS' nicode					//1 cr - 2 illd...
-	`RM' transmat				// transition matrix
-	`RS' hasmodels				//models or stacked
-	`TR' probs					//to store trans. probs.
-	`TR' loss					//to store length of stays
-	`TR' rmsts					//store rmsts
-	`TR' visits					//store visit probs
-	`TR' hazards				//store hazards
-	`TR' survivals				//store survivals
-	`RS' getprobs				//get trans. probs.
-	`RS' getlos					//get length of stays
-	`RS' getrmst				//get rmst
-	`RS' getvisit				//get prob visit
-	`RS' gethazard				//get hazards
-	`RS' getsurvival			//get survivals
+	`ss' touse		//to post predictions
+	`RS' method		//0 simulation, 1 aj, 2 analytic illd, ...
+	`RS' nicode		//1 cr - 2 illd...
+	`RM' transmat		// transition matrix
+	`RS' hasmodels		//models or stacked
+	`TR' probs		//to store trans. probs.
+	`TR' loss		//to store length of stays
+	`TR' rmsts		//store rmsts
+	`TR' visits		//store visit probs
+	`TR' hazards		//store hazards
+	`TR' survivals		//store survivals
+	`RS' getprobs		//get trans. probs.
+	`RS' getlos		//get length of stays
+	`RS' getrmst		//get rmst
+	`RS' getvisit		//get prob visit
+	`RS' gethazard		//get hazards
+	`RS' getsurvival	//get survivals
 	`RS' M
 	`RS' getcis
-	`RS' cimethod				//delta method or bootstrap
-	`RS' Nbs					//number of (total) betas for DM
-	`RM' VCV					//needed for DM + contrasts
+	`RS' cimethod		//delta method or bootstrap
+	`RS' Nbs		//number of (total) betas for DM
+	`RM' VCV		//needed for DM + contrasts
 	`RS' reset
 	`RS' obs
 	`RS' N 
@@ -52,9 +52,9 @@ struct predictms_struct
 	`RS' Nstarts
 	`SC' toupdate
 	`RS' K
-	`RS' Kind					//contains k index, gets updated
-	`RS' at						//at index, gets updated
-	`RS' std 					//std index, gets updated
+	`RS' Kind		//contains k index, gets updated
+	`RS' at			//at index, gets updated
+	`RS' std 		//std index, gets updated
 	`RS' standardise
 	`RS' survsim
 	`RS' Nats
@@ -74,28 +74,28 @@ struct predictms_struct
 	`RS' percentiles
 	`RS' med, lci, uci
 	`RS' getdiffs, getratios
-	`RC' novcv					//flag transitions to ignore VCV in CI calculation
-	`RS' tosave					//flag to save simulated datasets
-	`ss' savestub				//save dataset stub
-	`RS' savereplace			//, replace
+	`RC' novcv		//flag transitions to ignore VCV in CI calculation
+	`RS' tosave		//flag to save simulated datasets
+	`ss' savestub		//save dataset stub
+	`RS' savereplace	//, replace
 	`RC' iscox					
 	
-	`RM' pt						//stores probabilities (gets updated)
-	`RM' los					//stores length of stays (gets updated)
-	`RM' rmst					//stores rmst
-	`RM' visit					//stores visit probs
-	`RM' hazard					//stores hazards
-	`RM' survival				//stores survivals
-	`RS' level					//CI level
-	`RS' atref					//reference for diffs and ratios
+	`RM' pt			//stores probabilities (gets updated)
+	`RM' los		//stores length of stays (gets updated)
+	`RM' rmst		//stores rmst
+	`RM' visit		//stores visit probs
+	`RM' hazard		//stores hazards
+	`RM' survival		//stores survivals
+	`RS' level		//CI level
+	`RS' atref		//reference for diffs and ratios
 	
 	//stuff for userfunction
-	`RS' hasuser				//logical
+	`RS' hasuser			//logical
 	`RS' Nuservars, Nuserflag	//# of vars that need to be posted
-	`Ps' userfunc				//pointer to user function
-	`RM' user					//store predictions
-	`TR' users					//store ci predictions
-	`RS' userlink				//user link function
+	`Ps' userfunc			//pointer to user function
+	`RM' user			//store predictions
+	`TR' users			//store ci predictions
+	`RS' userlink			//user link function
 	
 	//for AJ
 	`RM' varpt
@@ -111,8 +111,8 @@ void predictms_setup(`SS' S)
 	transmat 	= st_matrix(st_local("transmatrix"))
 	S.Ntrans 	= strtoreal(st_local("Ntrans"))
 	S.Nstates 	= cols(transmat)
-	S.reset 	= st_local("reset")!=""							//default clock forward, o/w reset
-	S.touse 	= st_local("touse")						//to post predictions
+	S.reset 	= st_local("reset")!=""					//default clock forward, o/w reset
+	S.touse 	= st_local("touse")					//to post predictions
 	S.survsim 	= st_local("survsim")!=""
 
 	S.hasmodels	= st_local("models")!=""
@@ -134,10 +134,10 @@ void predictms_setup(`SS' S)
 			errprintf("hazard/survival prediction not allowed with Cox models\n")
 			exit(198)
 		}
-                if (st_local("devcode9")!="98342h2r6fwgi240wbg8gghgffghhgfh") {
-                        errprintf("Your model is not currently supported\n")
-                        exit(198)
-                }
+                if (st_local("visit")!="") {
+			errprintf("prediction type visit not supported with Cox models\n")
+			exit(198)
+		}
 	}
 	S.method 	= predictms_setup_get_method(transmat,S)
 	if (S.method==1 | S.method==2) {
@@ -152,7 +152,7 @@ void predictms_setup(`SS' S)
 	if (S.method==0 | S.method==3) {
 		if (st_local("n")=="") {
 			if (st_local("ci")=="") S.N = 100000
-			else					S.N = 10000
+			else			S.N = 10000
 		}
 		else S.N 	= strtoreal(st_local("n"))				//sample size for each simulation
 	}
@@ -471,9 +471,9 @@ get ci method:
 
 `RS' predictms_setup_get_ci_method(`SS' S)
 {
-	if 		(st_local("bootstrap")!="")		return(1)
+	if 		(st_local("bootstrap")!="")	return(1)
 	if 		(S.method==0 | S.method==3) 	return(1)
-	else 									return(0)
+	else 						return(0)
 }
 
 end
