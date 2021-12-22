@@ -1,7 +1,9 @@
-*! version 4.3.1 02sep2021 MJC
+*! version 4.4.0 22dec2021 MJC
 
 /*
 History - multistate/predictms
+22dec2021: version 4.4.0 - Cox model is now supported with predictms (ci's not supported yet)
+                         - added moremata check
 02sep2021: version 4.3.1 - bug fix, graphms ignored extra options; now fixed
                          - bug fix, when rmst was called with simulate it would error out; now fixed
 14mar2021: version 4.3.0 - accuracy and efficiency of numerical integration based predictions from an illness-death and extended 
@@ -228,6 +230,13 @@ program define predictms, sortpreserve properties(st) rclass
 	if _rc>0 {
 		display in yellow "You need to install the command merlin. This can be installed using,"
 		display in yellow ". {stata ssc install merlin}"
+		exit  198
+	}
+        
+        capture which lmoremata.mlib
+	if _rc>0 {
+		display in yellow "You need to install the moremata package. This can be installed using,"
+		display in yellow ". {stata ssc install moremata}"
 		exit  198
 	}
 	

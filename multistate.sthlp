@@ -66,7 +66,7 @@ Michael J. Crowther (1,2,*), Micki Hill (3), Paul C. Lambert (2,3)
 {p_end}
 
 {phang}
-(1) Red Door Analytics, Stockholm, Sweden
+(1) Red Door Analytics AB, Stockholm, Sweden
 {p_end}
 {phang}
 (2) Department of Medical Epidemiology and Biostatistics, Karolinska Institutet, Sweden

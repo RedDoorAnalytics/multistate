@@ -68,19 +68,22 @@ est store m6
 cap range tvar 0 16 1000
 
 predictms , transmat(tmat) 			///
-			models(m1 m2 m5) 		///
-			probability				///
+			models(m1 m2 m5) 	///
+			probability		///
+			los				///
 			at1(hormon 1 age 55) 	///
-			timevar(tvar) 			///
-			n(1000)				///
- 			devcode9(98342h2r6fwgi240wbg8gghgffghhgfh)
+			timevar(tvar) 		///
+			//n(1000)			
+			
 rename _prob* prob*
+rename _los* los*
 
 predictms , transmat(tmat) 			///
-			models(m3 m4 m6) 		///
-			probability				///
+			models(m3 m4 m6) 	///
+			probability		///
+			los				///
 			at1(hormon 1 age 55) 	///
-			timevar(tvar) 			///
+			timevar(tvar) 		///
 
 twoway (line _prob_at1_1_1 tvar)(line _prob_at1_1_2 tvar)(line _prob_at1_1_3 tvar) ///
        (line prob_at1_1_1 tvar, connect(stairstep)) ///
@@ -94,9 +97,19 @@ twoway (line _prob_at1_1_1 tvar)(line _prob_at1_1_2 tvar)(line _prob_at1_1_3 tva
         title("Illness-death model using {stMono:multistate} in Stata")
 
 graph display, xsize(10) ysize(5)
-graph export "/Users/Michael/Desktop/illd.jpg", replace
+graph export "/Users/Michael/Desktop/illd.png", replace
         
-        
-        
-        
+twoway (line _los_at1_1_1 tvar)(line _los_at1_1_2 tvar)(line _los_at1_1_3 tvar) ///
+       (line los_at1_1_1 tvar, connect(stairstep)) ///
+       (line los_at1_1_2 tvar, connect(stairstep)) ///
+       (line los_at1_1_3 tvar, connect(stairstep)) ///
+        , xtitle("Follow-up time")        ///
+        ytitle("Length of stay") ylabel(, angle(h) format(%2.1f)) ///
+        legend(order(1 "RP - LoS(Alive)" 4 "Cox - LoS(Alive)" ///
+        2 "RP - LoS(Relapsed)" 5 "Cox - LoS(Relapsed)" ///
+        3 "RP - LoS(Dead)" 6 "Cox - LoS(Dead)") pos(11) ring(0)) ///
+        title("Illness-death model using {stMono:multistate} in Stata")        
+
+graph display, xsize(10) ysize(5)        
+graph export "/Users/Michael/Desktop/los.png", replace        
         
