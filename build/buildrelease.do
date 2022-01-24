@@ -13,10 +13,10 @@ local includemata = 0
 
 //===========================================================================//
 
-//build release
+//build SSC release
 
-//current version up is 2_3_2
-local newversion 4_3_1
+//current version up is 4_4_0
+local newversion 4_4_0
 if `includemata' {
 	local newversion `newversion'_mata
 }
