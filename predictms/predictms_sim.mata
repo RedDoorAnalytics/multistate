@@ -40,9 +40,9 @@ void predictms_sim(`SS' S, `RS' from)
 				// simulate survival times and events
 				if (!S.method) {
 					if (S.iscox)	newdata = predictms_sim_cr_cox(S,Nsim[1],stimes[index,ind],j) 
-					else			newdata = predictms_sim_cr(S,Nsim[1],stimes[index,ind],j)
+					else		newdata = predictms_sim_cr(S,Nsim[1],stimes[index,ind],j)
 				}
-				else 				newdata = predictms_sim_cr_latent(S,Nsim[1],stimes[index,ind],j)
+				else 			newdata = predictms_sim_cr_latent(S,Nsim[1],stimes[index,ind],j)
 				
 				if (S.survsim) 	predictms_survsim_post(newdata[,1])
 
@@ -59,11 +59,11 @@ void predictms_sim(`SS' S, `RS' from)
 
 	} 	
 	
-	if (S.getprobs) 			predictms_calc_prob(S,stimes,states)
+	if (S.getprobs) 		predictms_calc_prob(S,stimes,states)
 	if (S.getlos | S.getrmst) 	predictms_calc_los(S,stimes,states)
-	if (S.getrmst) 				predictms_calc_rmst(S,stimes,states)
-	if (S.getvisit) 			predictms_calc_visit(S,stimes,states)
-	if (S.hasuser) 				predictms_calc_user(S)
+	if (S.getrmst) 			predictms_calc_rmst(S,stimes,states)
+	if (S.getvisit) 		predictms_calc_visit(S,stimes,states)
+	if (S.hasuser) 			predictms_calc_user(S)
 
 	if (S.tosave) predictms_sim_save(S,stimes,states)
 	

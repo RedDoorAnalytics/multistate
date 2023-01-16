@@ -129,10 +129,10 @@ void predictms_calc_prob(`SS' S, `RM' stimes, `RM' states)
 			if (rows(index) & cols(index)) tempstate[index] = states[index,s]
 		}
 		if (S.standardise) 	S.pt[t,] = S.pt[t,] :+ colsum(tempstate :== S.statematrix) :/S.N
-		else 				S.pt[t,] = colsum(tempstate :== S.statematrix) :/ S.N
+		else 			S.pt[t,] = colsum(tempstate :== S.statematrix) :/ S.N
 	}
 	if (S.standardise) 	S.pt[t,] = S.pt[t,] :+ colsum(states[,cols(states)] :== S.statematrix) :/S.N
-	else 				S.pt[t,] = colsum(states[,cols(states)] :== S.statematrix) :/S.N
+	else 			S.pt[t,] = colsum(states[,cols(states)] :== S.statematrix) :/S.N
 }
 
 void predictms_calc_los(`SS' S, `RM' stimes, `RM' states)

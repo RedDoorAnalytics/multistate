@@ -267,28 +267,28 @@ void predictms_core(`SS' S, `RS' from)
 				S.Kind = k
 				
 				//reset to 0 for each bootstrap sample in case of standardising
-				if (S.method==1) 	S.pt = J(S.obs,S.Nstates^2,0)
-				else 				predictms_init_storage(S,from)
+				if (S.method==1) S.pt = J(S.obs,S.Nstates^2,0)
+				else 		 predictms_init_storage(S,from)
 
 				//1 or std loop
 				for (std=1;std<=S.K;std++) {
 					
 					S.std = std
 					if (ptlosvisit) {
-						if 		(S.method==0 | S.method==3)	predictms_sim(S,from)
-						else if (S.method==1)				predictms_aj(S,from)	
-						else if (S.method==2)				predictms_analytic(S,from)
+						if (S.method==0 | S.method==3)	predictms_sim(S,from)
+						else if (S.method==1)		predictms_aj(S,from)	
+						else if (S.method==2)		predictms_analytic(S,from)
 					}
-					if (S.gethazard | S.getsurvival) 		predictms_model_predict(S,from)
+					if (S.gethazard | S.getsurvival) 	predictms_model_predict(S,from)
 					
 				}
 
 				if (S.standardise) {
-					if (S.getprobs) 	S.pt 		= S.pt 			:/ S.K
-					if (S.getlos) 	 	S.los   	= S.los    		:/ S.K
+					if (S.getprobs) 	S.pt 		= S.pt 		:/ S.K
+					if (S.getlos) 	 	S.los   	= S.los    	:/ S.K
 					if (S.getrmst) 	 	S.rmst   	= S.rmst    	:/ S.K
-					if (S.hasuser) 	 	S.user  	= S.user   		:/ S.K
-					if (S.getvisit)  	S.visit 	= S.visit  		:/ S.K
+					if (S.hasuser) 	 	S.user  	= S.user   	:/ S.K
+					if (S.getvisit)  	S.visit 	= S.visit  	:/ S.K
 					if (S.getsurvival) 	S.survival 	= S.survival 	:/ S.K
 				}
 

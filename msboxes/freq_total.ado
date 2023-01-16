@@ -5,9 +5,9 @@ program define freq_total
         syntax /*[if][in]*/,                    [ID(varname)   ///
                                                 Tmatrix(name)  ///
                                                 STATESNames(string asis) ///
-											    TRANSNames(string asis) ///
-												TIMEPoints(varname)  ///
-												SCale_freq(real 1)]
+                                    TRANSNames(string asis) ///
+                                        TIMEPoints(varname)  ///
+                                        SCale_freq(real 1)]
 												
 		
 			
@@ -244,25 +244,27 @@ program define freq_total
 
    local l=2
    forvalues i = 1/`Nstates' {
-			matname frequencies  State`i'  ,  columns(`l') explicit
-			local l=`l'+1
+                matname frequencies  State`i'  ,  columns(`l') explicit
+                local l=`l'+1
    }
   
     
 
    if `"`transnames'"' == "" {	
-			local l=1+`Nstates'+1
-			forvalues i = 1/`Ntransitions' {
-				matname frequencies  h`i'  ,  columns(`l') explicit
-				local l=`l'+1
-			}
+        local l=1+`Nstates'+1
+        forvalues i = 1/`Ntransitions' {
+                matname frequencies  h`i'  ,  columns(`l') explicit
+                local l=`l'+1
+        }
    }
    
    
     if `"`transnames'"' != "" {
 			local L0=1+`Nstates'+1
 			local l=1+`Nstates'+`Ntransitions'
-			matname frequencies  "`transnames'"   ,  columns(`L0'..`l') explicit
+                        n di `"`transnames'"'
+                        local tnames `"`transnames'"'
+			matname frequencies  `tnames'   ,  columns(`L0'..`l') explicit
 	}
 	
 	local L_final=1+`Nstates'+`Ntransitions'+1

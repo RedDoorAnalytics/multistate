@@ -29,23 +29,24 @@ mata:
 	for (s=1; s<=Ntrans; s++) {
 
 		trans 	= asarray(S.postrans,s0)[s]
-		b		= predictms_get_b(S,trans)
+		b	= predictms_get_b(S,trans)
+                b
 		logU	= log(runiform(Nsim,1))
 		Pmerlin = predictms_merlin_setup(S,b,Nsim,trans,t0)
 
 		if ((*Pmerlin).NI) {
-			rc 			= predictms_sim_root(	t=J(Nsim,1,.),		///
-												&merlin_root_ni(),	///
-												S.maxt,				///
-												0,1000,				///
-												Nsim,				///
-												t0copy=t0,			///	-> gets updated so must pass copy as it's recalled
-												logU,				///
-												1::Nsim,			///
-												Pmerlin,			///
-												S.tsreset[trans],	///
-												S.tscale2[trans],	///
-												S.time2[S.at])
+			rc = predictms_sim_root(	t=J(Nsim,1,.),		///
+                                &merlin_root_ni(),	///
+                                S.maxt,				///
+                                0,1000,				///
+                                Nsim,				///
+                                t0copy=t0,			///	-> gets updated so must pass copy as it's recalled
+                                logU,				///
+                                1::Nsim,			///
+                                Pmerlin,			///
+                                S.tsreset[trans],	///
+                                S.tscale2[trans],	///
+                                S.time2[S.at])
 		}
 		else {
 			if 		((*Pmerlin).familys=="exponential") {
