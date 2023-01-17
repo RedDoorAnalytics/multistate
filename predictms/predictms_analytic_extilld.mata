@@ -33,19 +33,22 @@ t = S.predtime
 	
 	if (S.getlos | S.getrmst) {
 		
-		Nqp 	= 30
-		gq 		= predictms_gq(Nqp)
-		qp		= (t:-S.enter) :/ 2 :* J(Nobs,1,gq[,1]') :+ (t:+S.enter) :/2
+		Nqp 	= S.chips
+		gq 	= predictms_gq(Nqp)
+		qp	= (t:-S.enter) :/ 2 :* J(Nobs,1,gq[,1]') :+ (t:+S.enter) :/2
 		if (from==1) { 
 			pred	= J(Nobs,4,0)
 			for (q=1; q<=Nqp; q++) {
-				pred = pred :+ predictms_analytic_extilld_prob1(Pmerlin,qp[,q],S.enter) :* gq[q,2]
+				pred = pred :+ 
+          predictms_analytic_extilld_prob1(Pmerlin,qp[,q],S.enter,S.chips) :* gq[q,2]
 			}
 		}
 		else {
 			pred	= J(Nobs,4,0)
 			for (q=1; q<=Nqp; q++) {
-				pred = pred :+ predictms_analytic_extilld_prob2(Pmerlin,qp[,q],S.enter) :* gq[q,2]
+				pred = pred :+ 
+          predictms_analytic_extilld_prob2(Pmerlin,qp[,q],S.enter) :* 
+          gq[q,2]
 			}
 		}
 		pred = pred :* (t:-S.enter) :/ 2
@@ -64,7 +67,10 @@ t = S.predtime
 	
 }
 
-`RM' predictms_analytic_extilld_prob1(`Pcm' Pmerlin, `RC' t, `RS' enter)
+`RM' predictms_analytic_extilld_prob1(`Pcm' Pmerlin,
+                `RC' t, 
+                `RS' enter,
+                `RS' chips)
 {
 	`gml' gml1, gml2, gml3
 	gml1 = *Pmerlin[1]
@@ -80,10 +86,10 @@ t = S.predtime
 	result[,1] = exp(-ch)
 	
 	//2
-	Ngq 	= 30
-	gq 		= predictms_gq(Ngq)
-	qw		= (t:-enter) :/ 2
-	qp		= qw :* J(Nobs,1,gq[,1]') :+ (t:+enter):/2
+	Ngq 	= chips
+	gq 	= predictms_gq(Ngq)
+	qw	= (t:-enter) :/ 2
+	qp	= qw :* J(Nobs,1,gq[,1]') :+ (t:+enter):/2
 	pred 	= J(Nobs,1,0)
 	for (q=1; q<=Ngq; q++) {						
 		res = (*gml1.Plogh[1])(gml1,qp[,q]) :- (*gml1.Pch[1])(gml1,qp[,q])

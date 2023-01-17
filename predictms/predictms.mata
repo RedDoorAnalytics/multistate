@@ -55,12 +55,12 @@ void predictms_core(`SS' S, `RS' from)
 	
 		ptlosvisit = S.getprobs | S.getlos | S.getvisit | S.getrmst
 		
-		if (S.getprobs)	 	S.pt[,] 		= J(S.obs,S.Nstates,0)											
-		if (S.getlos) 	 	S.los[,] 		= J(S.obs,S.Nstates,0)
-		if (S.getrmst) 	 	S.rmst[,] 		= J(S.obs,1,0)
-		if (S.getvisit)  	S.visit[,] 		= J(S.obs,S.Nstates,0)
-		if (S.gethazard) 	S.hazard	 	= J(S.obs,S.Nnextstates[from],0)
-		if (S.getsurvival)	S.survival	 	= J(S.obs,S.Nnextstates[from],0)
+		if (S.getprobs)	 	S.pt[,] 	= J(S.obs,S.Nstates,0)											
+		if (S.getlos) 	 	S.los[,] 	= J(S.obs,S.Nstates,0)
+		if (S.getrmst) 	 	S.rmst[,] 	= J(S.obs,1,0)
+		if (S.getvisit)  	S.visit[,] 	= J(S.obs,S.Nstates,0)
+		if (S.gethazard) 	S.hazard	 = J(S.obs,S.Nnextstates[from],0)
+		if (S.getsurvival)	S.survival	 = J(S.obs,S.Nnextstates[from],0)
 
 		//std loop
 		for (std=1;std<=S.K;std++) {
@@ -121,16 +121,16 @@ void predictms_core(`SS' S, `RS' from)
 				Best 	= J(0,1,.)
 				VCV 	= J(0,0,.)
 				Bindex 	= J(S.Ntrans,2,.)
-				i1 		=  1
+				i1 	=  1
 				for (i=1;i<=S.Ntrans;i++) {
-					Bi			= asarray(S.transinfo,(i,1))'
-					NBi			= rows(Bi)
+					Bi	= asarray(S.transinfo,(i,1))'
+					NBi	= rows(Bi)
 					Bindex[i,1] = i1
 					Bindex[i,2] = i1 + NBi - 1
-					Best		= Best\Bi
+					Best	    = Best\Bi
 					if (S.novcv[i]) VCV = blockdiag(VCV,J(NBi,NBi,0))
-					else			VCV = blockdiag(VCV,asarray(S.transinfo,(i,2)))
-					i1 			= Bindex[i,2] + 1
+					else		VCV = blockdiag(VCV,asarray(S.transinfo,(i,2)))
+					i1 = Bindex[i,2] + 1
 				}
 			}
 			else {
@@ -150,7 +150,7 @@ void predictms_core(`SS' S, `RS' from)
 				predictms_init_storage(S,from)
 				
 				if (abs(Best[b])<1) hstep = abs(Best[b])
-				else 				hstep = 1
+				else 		    hstep = 1
 				hstep = hstep * c("epsdouble") :^ (1/3)
 				newB[b] = Best[b] + hstep/2
 				
@@ -267,28 +267,28 @@ void predictms_core(`SS' S, `RS' from)
 				S.Kind = k
 				
 				//reset to 0 for each bootstrap sample in case of standardising
-				if (S.method==1) 	S.pt = J(S.obs,S.Nstates^2,0)
-				else 				predictms_init_storage(S,from)
+				if (S.method==1) S.pt = J(S.obs,S.Nstates^2,0)
+				else 		 predictms_init_storage(S,from)
 
 				//1 or std loop
 				for (std=1;std<=S.K;std++) {
 					
 					S.std = std
 					if (ptlosvisit) {
-						if 		(S.method==0 | S.method==3)	predictms_sim(S,from)
-						else if (S.method==1)				predictms_aj(S,from)	
-						else if (S.method==2)				predictms_analytic(S,from)
+						if (S.method==0 | S.method==3)	predictms_sim(S,from)
+						else if (S.method==1)		predictms_aj(S,from)	
+						else if (S.method==2)		predictms_analytic(S,from)
 					}
-					if (S.gethazard | S.getsurvival) 		predictms_model_predict(S,from)
+					if (S.gethazard | S.getsurvival) 	predictms_model_predict(S,from)
 					
 				}
 
 				if (S.standardise) {
-					if (S.getprobs) 	S.pt 		= S.pt 			:/ S.K
-					if (S.getlos) 	 	S.los   	= S.los    		:/ S.K
+					if (S.getprobs) 	S.pt 		= S.pt 		:/ S.K
+					if (S.getlos) 	 	S.los   	= S.los    	:/ S.K
 					if (S.getrmst) 	 	S.rmst   	= S.rmst    	:/ S.K
-					if (S.hasuser) 	 	S.user  	= S.user   		:/ S.K
-					if (S.getvisit)  	S.visit 	= S.visit  		:/ S.K
+					if (S.hasuser) 	 	S.user  	= S.user   	:/ S.K
+					if (S.getvisit)  	S.visit 	= S.visit  	:/ S.K
 					if (S.getsurvival) 	S.survival 	= S.survival 	:/ S.K
 				}
 

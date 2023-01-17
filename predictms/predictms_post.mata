@@ -19,18 +19,18 @@ mata:
 
 void predictms_post_predictions(`SS' S, `RS' fr, `RS' predtype)
 {	
-								predictms_post(S,fr,predtype)
+	predictms_post(S,fr,predtype)
 	if (S.getdiffs)				predictms_contrast_post(S,fr,predtype,1)
 	if (S.getratios) 			predictms_contrast_post(S,fr,predtype,0)
 
 	if (S.getcis) {
 		if (!S.cimethod) {		//DM
-								predictms_post_cis_dm(S,fr,predtype)
+			predictms_post_cis_dm(S,fr,predtype)
 			if (S.getdiffs)		predictms_contrast_post_cis_dm(S,fr,predtype,1)
 			if (S.getratios) 	predictms_contrast_post_cis_dm(S,fr,predtype,0)
 		}
-		else {					//Bootstrap
-								predictms_post_cis(S,fr,predtype)
+		else {				//Bootstrap
+			predictms_post_cis(S,fr,predtype)
 			if (S.getdiffs)		predictms_contrast_post_cis(S,fr,predtype,1)
 			if (S.getratios) 	predictms_contrast_post_cis(S,fr,predtype,0)
 		}
@@ -42,7 +42,7 @@ void predictms_post(`SS' S, `RS' fr, `RS' predtype)
 	Nvars = S.Nstates
 
 	for (at=1;at<=S.Nats;at++) {
-		
+
 		if (predtype==0) {
 			preds 	= asarray(S.probs,(fr,at,1))
 			stub 	= "_prob_at"+strofreal(at)+"_"+strofreal(fr)

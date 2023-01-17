@@ -13,12 +13,12 @@ local PCm	pointer(struct merlin_struct scalar) colvector
 
 mata:
 
-`RM' predictms_sim_cr(				///
-						`SS' S, 	/// predictms object
-						`RS' Nsim, 	/// # of new times to simulate
-						`RC' t0, 	///	entry time
-						`RS' s0		/// entry state
-						)
+`RM' predictms_sim_cr(			///
+                        `SS' S, 	/// predictms object
+                        `RS' Nsim, 	/// # of new times to simulate
+                        `RC' t0, 	/// entry time
+                        `RS' s0		/// entry state
+                        )
 {
 	newdata	= J(Nsim,3,0)			//time,state,done
 	Ntrans 	= S.Nnextstates[s0]
@@ -27,27 +27,27 @@ mata:
 	merlinP = J(Ntrans,1,NULL)
 	for (s=1; s<=Ntrans; s++) {
 		trans 		= asarray(S.postrans,s0)[s]
-		b			= predictms_get_b(S,trans)
+		b		= predictms_get_b(S,trans)
 		merlinP[s] 	= predictms_merlin_setup(S,b,Nsim,trans,t0)
 	}
 
 	//simulate new times
 	logU	= log(runiform(Nsim,1))
-	rc 		= predictms_sim_root(	t=J(Nsim,1,.),			///
-									&predictms_total_ch(),	///
-									S.maxt,					///
-									0,1000,					///
-									Nsim,					///
-									t0,						///
-									logU,					///
-									1::Nsim,				///
-									merlinP,				///
-									Ntrans,					///
-									asarray(S.postrans,s0),	///
-									S.tsreset,				///
-									S.tscale2,				///
-									S.time2,				///
-									S.at)
+	rc 	= predictms_sim_root(	t=J(Nsim,1,.),			///
+                                &predictms_total_ch(),	                ///
+                                S.maxt,					///
+                                0,1000,					///
+                                Nsim,					///
+                                t0,					///
+                                logU,					///
+                                1::Nsim,				///
+                                merlinP,				///
+                                Ntrans,					///
+                                asarray(S.postrans,s0),	                ///
+                                S.tsreset,				///
+                                S.tscale2,				///
+                                S.time2,				///
+                                S.at)
 	newdata[,1] = t
 	update_rcens(newdata,s0,S.maxt)	
 	
@@ -55,7 +55,7 @@ mata:
 	eventindex 	= selectindex(t:<S.maxt)
 	Nevents		= rows_cols(eventindex)
 	if (Nevents[1] & Nevents[2]) {
-		nextstates 				= asarray(S.posnextstates,s0)
+		nextstates = asarray(S.posnextstates,s0)
 		newdata[eventindex,2] 	= predictms_get_newstate(t[eventindex],eventindex,merlinP,Ntrans,nextstates,rc[eventindex])
 
 		//obs now in absorbing state are done
@@ -78,12 +78,12 @@ mata:
 }
 
 `RM' predictms_total_ch(`RC' x, `RC' t0, `RC' logU, `RC' index, `PCm' p, `RS' Ntrans, 	///
-						`RC' transs, `RC' reset, `RC' tscale2, `RC' time2, `RS' at)
+		`RC' transs, `RC' reset, `RC' tscale2, `RC' time2, `RS' at)
 {
 	struct merlin_struct gml
 	
 	Nobs 	= rows(x)
-	ch		= J(Nobs,1,0)
+	ch	= J(Nobs,1,0)
 
 	for (s=1; s<=Ntrans; s++) {
 		
@@ -95,19 +95,18 @@ mata:
 		asarray(gml.xbindex,1,index)
 		
 		if (gml.NI) {
-			Nq 		= 30
+			Nq 	= strtoreal(st_local("chintpoints"))
 			qpw 	= predictms_gq(Nq)
-			qp 		= ((x:-t0) :* J(Nobs,1,qpw[,1]') :+ x:+t0) :/ 2
+			qp 	= ((x:-t0) :* J(Nobs,1,qpw[,1]') :+ x:+t0) :/ 2
 			if (reset[trans]) 	qp = qp :- t0
-			if (tscale2[trans]) qp = qp :+ time2[at]
+			if (tscale2[trans])     qp = qp :+ time2[at]
 			
-			chq		= J(Nobs,Nq,.)
+			chq = J(Nobs,Nq,.)
 			for (q=1; q<=Nq; q++) {
 				chq[,q] = exp((*gml.Plogh)(gml,qp[,q]))
 			}
 			_editmissing(chq,0)		
 			ch = ch :+ (x:-t0):/2 :* chq * qpw[,2]
-			
 		}
 		else {
 

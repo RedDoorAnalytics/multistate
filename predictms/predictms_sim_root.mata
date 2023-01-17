@@ -16,12 +16,12 @@ local gml 	struct merlin_struct scalar
 mata:
 
 `RC' predictms_sim_root(transmorphic x,      						/// bj: will be replaced by solution
-						pointer(real matrix function) scalar f,		/// Address of the function whose zero will be sought for
-						`RS' bx,									/// Root will be sought for within a range [t0,bx]
-						`RS' tol,   								/// Acceptable tolerance for the root value (default 0)
-						`RS' maxit,									/// maximum # of iterations (default: 1000)
-						`RS' Nsim,|									///
-						`opts')            							//  additional args to pass on to f
+        pointer(real matrix function) scalar f,		/// Address of the function whose zero will be sought for
+        `RS' bx,									/// Root will be sought for within a range [t0,bx]
+        `RS' tol,   								/// Acceptable tolerance for the root value (default 0)
+        `RS' maxit,									/// maximum # of iterations (default: 1000)
+        `RS' Nsim,|									///
+        `opts')            							//  additional args to pass on to f
 {
     transmorphic  fs    // setup for f
     `RC' a, b, c       	// Abscissae, descr. see above
@@ -33,7 +33,7 @@ mata:
     `RS' new_step      	// Step at this iteration
     `RS' t1, cb, t2
     `RS' itr
-	`RC' index
+    `RC' index
 
     fs = mm_callf_setup(f, args()-6, `opts') 	// bj: prepare function call
 	index	= o3
@@ -44,11 +44,11 @@ mata:
 	tempo2 	= o2					//logU
 	
 	//limits
-    a = o1
+        a = o1
 	b = J(Nsim,1,bx)
 
 	fa = mm_callf(fs, a);  fb = mm_callf(fs, b)
-    c = a;  fc = fa
+        c = a;  fc = fa
 
     //if ( fa==. ) return(0)      // bj: abort if fa missing
 	tempindex = selectindex(fa:==.)
@@ -126,7 +126,7 @@ mata:
 		}
 
 		tol_act = 2:*epsilon_vec(b[index]) :+ tol:/2
-        new_step = (c[index]:-b[index]):/2
+                new_step = (c[index]:-b[index]):/2
 
 		flag1 = (abs(new_step):<=tol_act) :+ (fb[index]:==0)
 		flag2 = (flag1:==0)

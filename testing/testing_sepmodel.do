@@ -77,7 +77,7 @@ timer on 1
 predictms , transmat(tmat) models(m5 m4 m6) 	///
 			probability 						///
 			at1(age 55)                      	///
-			timevar(tvar)					//	simulate
+			timevar(tvar)						simulate
 // 			ci from(2 3)
 timer off 1
 

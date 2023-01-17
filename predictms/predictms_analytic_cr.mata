@@ -28,9 +28,9 @@ void predictms_analytic_cr(`SS' S, `Pcm' Pmerlin, `RS' Nobs)
 	}
 	
 	if (S.getlos | S.getrmst) {
-		Nqp 	= 30
-		gq 		= predictms_gq(Nqp)
-		qp		= (t:-S.enter) :/ 2 :* J(Nobs,1,gq[,1]') :+ (t:+S.enter) :/2
+		Nqp 	= S.chips
+		gq 	= predictms_gq(Nqp)
+		qp	= (t:-S.enter) :/ 2 :* J(Nobs,1,gq[,1]') :+ (t:+S.enter) :/2
 		
 		pred	= J(Nobs,S.Nstates,0)
 		for (q=1; q<=Nqp; q++) {
@@ -53,10 +53,10 @@ void predictms_analytic_cr(`SS' S, `Pcm' Pmerlin, `RS' Nobs)
 `RM' predictms_analytic_cr_p(`SS' S, `Pcm' Pmerlin, `RS' Nobs, `RC' t)
 {
 	`gml' gml
-	Nqp 	= 30
-	gq 		= predictms_gq(Nqp)
+	Nqp 	= S.chips
+	gq 	= predictms_gq(Nqp)
 	pred 	= J(Nobs,S.Nstates,0)
-	qp		= (t:-S.enter) :/ 2 :* J(Nobs,1,gq[,1]') :+ (t:+S.enter) :/2
+	qp	= (t:-S.enter) :/ 2 :* J(Nobs,1,gq[,1]') :+ (t:+S.enter) :/2
 
 	//get total S at qps
 	totalS 	= J(Nobs,Nqp,0)

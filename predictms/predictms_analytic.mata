@@ -25,15 +25,15 @@ void predictms_analytic(`SS' S, `RS' from)
 	
 	//setup
 	for (s=1; s<=S.Ntrans; s++) {
-		b			= predictms_get_b(S,s)
+		b		= predictms_get_b(S,s)
 		Pmerlin[s] 	= predictms_merlin_setup(S,b,Nobs,s)
 	}
 	
 	//predict
-	if 		(S.nicode==1) 	predictms_analytic_survival(S,Pmerlin,Nobs)
+	if 	(S.nicode==1) 	predictms_analytic_survival(S,Pmerlin,Nobs)
 	else if (S.nicode==2) 	predictms_analytic_cr(S,Pmerlin,Nobs)
 	else if (S.nicode==3) 	predictms_analytic_illd(S,from,Pmerlin,Nobs)
-	else					predictms_analytic_extilld(S,from,Pmerlin,Nobs)
+	else			predictms_analytic_extilld(S,from,Pmerlin,Nobs)
 	
 	//tidyup
 	for (s=1; s<=S.Ntrans; s++) rmexternal(st_local("GML"+strofreal(s))) 	

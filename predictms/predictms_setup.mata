@@ -71,6 +71,7 @@ struct predictms_struct
 	`TR' postrans
 	`RC' time2
 	`RC' tsreset
+        `RS' chips
 	`RS' percentiles
 	`RS' med, lci, uci
 	`RS' getdiffs, getratios
@@ -211,9 +212,11 @@ void predictms_setup(`SS' S)
 		}
 	}
 	
-	S.toupdate 		= uniqrows(tokens(st_local("toupdate"))')
+	S.toupdate 	= uniqrows(tokens(st_local("toupdate"))')
 	S.standardise 	= st_local("standardise")!=""
 	
+        S.chips         = strtoreal(st_local("chintpoints"))
+        
 	S.getcis = st_local("ci")!=""						//get confidence intervals
 	predictms_novcv(S)
 	if (S.getcis) {
@@ -248,7 +251,7 @@ void predictms_setup(`SS' S)
 	
 	//design matrix stuff
 	S.Nats 			= strtoreal(st_local("Nats"))			
-	S.K 			= strtoreal(st_local("K"))				//Number of design matrices to loop over; 1 for normal, # patients for standardised predictions
+	S.K 			= strtoreal(st_local("K"))	//Number of design matrices to loop over; 1 for normal, # patients for standardised predictions
 	S.Kind  		= 0
 	
 	//contrasts
@@ -384,9 +387,9 @@ void predictms_novcv(`SS' S)
 	S.novcv = novcvflag
 }
 
-`RM' predictms_mvrnorm_antithetic( 	`RC' mvec,		///
-									`RM' V,			///
-									`RS' n)	
+`RM' predictms_mvrnorm_antithetic( `RC' mvec,		///
+                                `RM' V,			///
+                                `RS' n)	
 {
 	`RS' nvars
 	`RM' cholV, z, res
@@ -418,48 +421,48 @@ get prediction method:
 
 `RS' predictms_setup_get_method(`RM' transmat, `SS' S)
 {
-	if (S.iscox) 						return(0)
+	if (S.iscox) 				return(0)
 	
-	if (st_local("aj")!="") 			return(1)	//AJ estimator
+	if (st_local("aj")!="") 		return(1)	//AJ estimator
 	
 	if (st_local("simulate")!="") {
-		if (st_local("latent")!="")		return(3)	//simulation using latent times
-		else							return(0)	//simulate - direct
+		if (st_local("latent")!="")	return(3)	//simulation using latent times
+		else				return(0)	//simulate - direct
 	}
 	
 	if (st_local("reset")!="" | st_local("tsreset")!="") {
-		if (st_local("latent")!="") return(3)
-		else 						return(0)
+		if (st_local("latent")!="")     return(3)
+		else 			        return(0)
 	}
 	
 	if (st_local("singleevent")!="" | transmat==(.,1\.,.)) {
 		S.nicode = 1	
-		return(2)		//ni
+		return(2)	//ni
 	}
 	
 	if (st_local("cr")!="") {
 		S.nicode = 2	//cr
-		return(2)		//ni
+		return(2)	//ni
 	}
 	
 	Nrows = rows(transmat)
 	if (sum(transmat[|2,.\Nrows,.|])==0) {
 		S.nicode = 2	//cr
-		return(2)		//ni
+		return(2)	//ni
 	}
 
 	if (transmat==(.,1,2\.,.,3\.,.,.)) {
 		S.nicode = 3	//illd
-		return(2)		//ni
+		return(2)	//ni
 	}
 
 	if (transmat==(.,1,2,.\.,.,.,3\.,.,.,.\.,.,.,.)) {
 		S.nicode = 4	//extended illd
-		return(2)		//ni
+		return(2)	//ni
 	}
 	
 	if (st_local("latent")!="")	return(3)
-	else 						return(0)	
+	else 				return(0)	
 }
 
 /*
@@ -471,9 +474,9 @@ get ci method:
 
 `RS' predictms_setup_get_ci_method(`SS' S)
 {
-	if 		(st_local("bootstrap")!="")	return(1)
-	if 		(S.method==0 | S.method==3) 	return(1)
-	else 						return(0)
+	if 	(st_local("bootstrap")!="")	return(1)
+	if 	(S.method==0 | S.method==3) 	return(1)
+	else 	        			return(0)
 }
 
 end
