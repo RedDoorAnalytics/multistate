@@ -71,6 +71,7 @@ struct predictms_struct
 	`TR' postrans
 	`RC' time2
 	`RC' tsreset
+        `RS' chips
 	`RS' percentiles
 	`RS' med, lci, uci
 	`RS' getdiffs, getratios
@@ -211,9 +212,11 @@ void predictms_setup(`SS' S)
 		}
 	}
 	
-	S.toupdate 		= uniqrows(tokens(st_local("toupdate"))')
+	S.toupdate 	= uniqrows(tokens(st_local("toupdate"))')
 	S.standardise 	= st_local("standardise")!=""
 	
+        S.chips         = strtoreal(st_local("chintpoints"))
+        
 	S.getcis = st_local("ci")!=""						//get confidence intervals
 	predictms_novcv(S)
 	if (S.getcis) {
@@ -404,7 +407,6 @@ void predictms_novcv(`SS' S)
 	//draw via x = mu + A*z
 	res = J(nvars,n,.)
 	for (i=1; i<=n; i++) res[.,i] = mvec + cholV*z[., i]
-        res
 	return(res')
 }
 

@@ -49,11 +49,11 @@ mata:
 {
 	if (S.hasmodels) {
 		if (!S.Kind | S.novcv[trans]) 	b = asarray(S.transinfo,(trans,1))
-		else 							b = asarray(S.transinfo,(trans,2))[S.Kind,]
+		else 				b = asarray(S.transinfo,(trans,2))[S.Kind,]
 	}
 	else {
-		if (!S.Kind) 					b = asarray(S.transinfo,(1))
-		else 							b = asarray(S.transinfo,(2))[S.Kind,]
+		if (!S.Kind) 			b = asarray(S.transinfo,(1))
+		else 				b = asarray(S.transinfo,(2))[S.Kind,]
 	}
 	return(b)
 }

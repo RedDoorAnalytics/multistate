@@ -18,28 +18,29 @@ local Pcm	pointer(struct merlin_struct scalar) colvector
 mata:
 
 // illness-death
-void predictms_analytic_illd(`SS' S, `RS' from, `Pcm' Pmerlin, `RS' Nobs)
+void predictms_analytic_illd(`SS' S, `RS' from,
+                `Pcm' Pmerlin, `RS' Nobs)
 {
 	t = S.predtime
 	
 	if (S.getprobs) {
 		
-		if (from==1) 	pred = predictms_analytic_illd_prob1(Pmerlin,t,S.enter)
-		else 			pred = predictms_analytic_illd_prob2(Pmerlin,t,S.enter)
+		if (from==1) 	pred = predictms_analytic_illd_prob1(Pmerlin,t,S.enter,S.chips)
+		else 		pred = predictms_analytic_illd_prob2(Pmerlin,t,S.enter)
 		
 		if (S.standardise) 	S.pt = S.pt :+ pred
-		else 				S.pt = pred
+		else 			S.pt = pred
 	}
 	
 	if (S.getlos | S.getrmst) {
 		
-		Nqp 	= 30
-		gq 		= predictms_gq(Nqp)
-		qp		= (t:-S.enter) :/ 2 :* J(Nobs,1,gq[,1]') :+ (t:+S.enter) :/2
+		Nqp 	= S.chips
+		gq 	= predictms_gq(Nqp)
+		qp	= (t:-S.enter) :/ 2 :* J(Nobs,1,gq[,1]') :+ (t:+S.enter) :/2
 		if (from==1) { 
 			pred	= J(Nobs,3,0)
 			for (q=1; q<=Nqp; q++) {
-				pred = pred :+ predictms_analytic_illd_prob1(Pmerlin,qp[,q],S.enter) :* gq[q,2]
+				pred = pred :+ predictms_analytic_illd_prob1(Pmerlin,qp[,q],S.enter,S.chips) :* gq[q,2]
 			}
 		}
 		else {
@@ -64,7 +65,7 @@ void predictms_analytic_illd(`SS' S, `RS' from, `Pcm' Pmerlin, `RS' Nobs)
 		
 }
 
-`RM' predictms_analytic_illd_prob1(`Pcm' Pmerlin, `RC' t, `RS' enter)
+`RM' predictms_analytic_illd_prob1(`Pcm' Pmerlin, `RC' t, `RS' enter, `RS' chips)
 {
 	`gml' gml1, gml2, gml3
 	gml1 = *Pmerlin[1]
@@ -75,15 +76,15 @@ void predictms_analytic_illd(`SS' S, `RS' from, `Pcm' Pmerlin, `RS' Nobs)
 	result 	= J(Nobs,3,.)
 
 	//1
-	ch		= (*gml1.Pch[1])(gml1,t) :+ (*gml2.Pch[1])(gml2,t)
-	_editmissing(ch,0)
+	ch = (*gml1.Pch[1])(gml1,t) :+ (*gml2.Pch[1])(gml2,t)
+ 	_editmissing(ch,0)
 	result[,1] = exp(-ch)
-	
+
 	//2
-	Ngq 	= 30
-	gq 		= predictms_gq(Ngq)
-	qw		= (t:-enter) :/ 2
-	qp		= qw :* J(Nobs,1,gq[,1]') :+ (t:+enter):/2
+	Ngq 	= chips
+	gq 	= predictms_gq(Ngq)
+	qw	= (t:-enter) :/ 2
+	qp	= qw :* J(Nobs,1,gq[,1]') :+ (t:+enter):/2
 	pred 	= J(Nobs,1,0)
 	
 	for (q=1; q<=Ngq; q++) {					
@@ -96,7 +97,7 @@ void predictms_analytic_illd(`SS' S, `RS' from, `Pcm' Pmerlin, `RS' Nobs)
 	
 	if (missing(pred)==Nobs) merlin_error("Error in numerical integration; try the -simulate- option")
 	
-	_editmissing(pred,0)
+ 	_editmissing(pred,0)
 	result[,2] = pred
 	
 	//delayed entry
@@ -118,7 +119,7 @@ void predictms_analytic_illd(`SS' S, `RS' from, `Pcm' Pmerlin, `RS' Nobs)
 	
 	Nobs 		= rows(t)
 	pred 		= J(Nobs,3,0)
-	ch			= (*gml.Pch[1])(gml,t)
+	ch		= (*gml.Pch[1])(gml,t)
 	_editmissing(ch,0)
 	pred[,2] 	= exp(-ch)
 	

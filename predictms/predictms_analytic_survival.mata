@@ -41,9 +41,9 @@ void predictms_analytic_survival(`SS' S, `Pcm' Pmerlin, `RS' Nobs)
 	if (S.getlos | S.getrmst) {
 		
 		pred	= J(Nobs,2,.)
-		Nqp 	= 30
-		gq 		= predictms_gq(Nqp)
-		qp		= (t:-S.enter) :/ 2 :* J(Nobs,1,gq[,1]') :+ (t:+S.enter) :/2
+		Nqp 	= S.chips
+		gq 	= predictms_gq(Nqp)
+		qp	= (t:-S.enter) :/ 2 :* J(Nobs,1,gq[,1]') :+ (t:+S.enter) :/2
 		
 		rmst	= J(Nobs,Nqp,.)
 		for (q=1; q<=Nqp; q++) {

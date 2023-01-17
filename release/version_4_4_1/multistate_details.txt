@@ -1,0 +1,35 @@
+TITLE: `MULTISTATE' : module for multi-state survival analysis.
+
+DESCRIPTION/AUTHOR: multistate provides a set of commands for multi-state 
+survival analysis. -msset- is a data preparation tool which converts a dataset 
+from wide (one observation per subject, multiple time and status variables) 
+to long (one observation for each transition of which a subject is at risk). 
+-msaj- calculates the non-parametric Aalen-Johansen estimates of transition 
+probabilities. -msboxes- creates a descriptive plot of the multi-state process 
+through the transition matrix and numbers at risk. -stms- fits joint 
+transition-specific survival models, allowing each transition to have a 
+different parametric model, yet maximised jointly to enable sharing of 
+covariate effects across transitions. -predictms- calculates a variety of 
+predictions from a multi-state survival model, including transition 
+probabilities, length of stay (restricted mean time in each state), the 
+probability of ever visiting each state and more. Predictions are made at 
+user-specified covariate patterns. Differences and ratios of predictions 
+across covariate patterns can also be calculated. Standardised 
+(study population-averaged) predictions can be obtained. Confidence intervals 
+for all quantities are available. Numerical integration, simulation or the 
+Aalen-Johansen estimator are used to calculate all quantities. User-defined 
+predictions can also be calculated by providing a user-written Mata function, 
+to provide complete flexibility. -predictms- can be used with a general 
+transition matrix (cyclic or acyclic), and allows the use of 
+transition-specific timescales.
+
+Author: Michael J. Crowther, Red Door Analytics and Karolinska Institutet
+Support: email michael@reddooranalytics.se
+
+Author: Micki Hill, University of Leicester
+Support: email mh594@le.ac.uk
+
+Author: Paul Lambert, University of Leicester and Karolinska Institutet
+Support: email paul.lambert@le.ac.uk
+
+Requires: Stata version 15.1

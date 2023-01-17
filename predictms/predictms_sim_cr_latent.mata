@@ -13,12 +13,12 @@ local Pm	pointer(struct merlin_struct scalar) scalar
 
 mata:
 
-`RM' predictms_sim_cr_latent(				///
-								`SS' S, 	/// predictms object
-								`RS' Nsim, 	/// # of new times to simulate
-								`RC' t0, 	///	entry time
-								`RS' s0		/// entry state
-								)
+`RM' predictms_sim_cr_latent(			///
+                                `SS' S, 	/// predictms object
+                                `RS' Nsim, 	/// # of new times to simulate
+                                `RC' t0, 	/// entry time
+                                `RS' s0		/// entry state
+                                )
 {
 	`Pm' Pmerlin
 
@@ -30,26 +30,26 @@ mata:
 
 		trans 	= asarray(S.postrans,s0)[s]
 		b	= predictms_get_b(S,trans)
-                b
 		logU	= log(runiform(Nsim,1))
 		Pmerlin = predictms_merlin_setup(S,b,Nsim,trans,t0)
 
 		if ((*Pmerlin).NI) {
-			rc = predictms_sim_root(	t=J(Nsim,1,.),		///
+			rc = predictms_sim_root(	
+                                t=J(Nsim,1,.),		///
                                 &merlin_root_ni(),	///
-                                S.maxt,				///
-                                0,1000,				///
-                                Nsim,				///
-                                t0copy=t0,			///	-> gets updated so must pass copy as it's recalled
-                                logU,				///
-                                1::Nsim,			///
-                                Pmerlin,			///
+                                S.maxt,			///
+                                0,1000,			///
+                                Nsim,			///
+                                t0copy=t0,		/// -> gets updated so must pass copy as it's recalled
+                                logU,			///
+                                1::Nsim,		///
+                                Pmerlin,		///
                                 S.tsreset[trans],	///
                                 S.tscale2[trans],	///
                                 S.time2[S.at])
 		}
 		else {
-			if 		((*Pmerlin).familys=="exponential") {
+			if 	((*Pmerlin).familys=="exponential") {
 				if (S.tsreset[trans]) {
 					if (S.tscale2[trans]) 	t = merlin_simulate_exp((*Pmerlin),logU,S.maxt,J(Nobs,1,S.time2[S.at])) :- S.time2[S.at]
 					else 					t = merlin_simulate_exp((*Pmerlin),logU,S.maxt)
@@ -80,18 +80,19 @@ mata:
 				}
 			}
 			else {
-				rc 			= predictms_sim_root(	t=J(Nsim,1,.),		///
-													&merlin_root_ch(),	///
-													S.maxt,				///
-													0,1000,				///
-													Nsim,				///
-													t0copy=t0,			///	-> gets updated so must pass copy as it's recalled
-													logU,				///
-													1::Nsim,			///
-													Pmerlin,			///
-													S.tsreset[trans],	///
-													S.tscale2[trans],	///
-													S.time2[S.at])
+				rc = predictms_sim_root(	///
+                                        t=J(Nsim,1,.),		///
+                                        &merlin_root_ch(),	///
+                                        S.maxt,			///
+                                        0,1000,			///
+                                        Nsim,			///
+                                        t0copy=t0,		///	-> gets updated so must pass copy as it's recalled
+                                        logU,			///
+                                        1::Nsim,		///
+                                        Pmerlin,		///
+                                        S.tsreset[trans],	///
+                                        S.tscale2[trans],	///
+                                        S.time2[S.at])
 			}
 		}
 		newtimes[,s] = t
@@ -136,7 +137,7 @@ function merlin_root_ni(`RC' x, `RC' t0, `RC' logU, `RC' index, `Pm' p,  ///
 	gml.N = gml.Nobs = Nobs	
 	asarray(gml.xbindex,1,index)
 		
-	Nq 		= 30
+	Nq 	= strtoreal(st_local("chintpoints"))
 	qpw 	= predictms_gq(Nq)
 	qp 		= ((x:-t0) :* J(Nobs,1,qpw[,1]') :+ x:+t0) :/ 2
 	if (reset) 	qp = qp :- t0

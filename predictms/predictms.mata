@@ -55,12 +55,12 @@ void predictms_core(`SS' S, `RS' from)
 	
 		ptlosvisit = S.getprobs | S.getlos | S.getvisit | S.getrmst
 		
-		if (S.getprobs)	 	S.pt[,] 		= J(S.obs,S.Nstates,0)											
-		if (S.getlos) 	 	S.los[,] 		= J(S.obs,S.Nstates,0)
-		if (S.getrmst) 	 	S.rmst[,] 		= J(S.obs,1,0)
-		if (S.getvisit)  	S.visit[,] 		= J(S.obs,S.Nstates,0)
-		if (S.gethazard) 	S.hazard	 	= J(S.obs,S.Nnextstates[from],0)
-		if (S.getsurvival)	S.survival	 	= J(S.obs,S.Nnextstates[from],0)
+		if (S.getprobs)	 	S.pt[,] 	= J(S.obs,S.Nstates,0)											
+		if (S.getlos) 	 	S.los[,] 	= J(S.obs,S.Nstates,0)
+		if (S.getrmst) 	 	S.rmst[,] 	= J(S.obs,1,0)
+		if (S.getvisit)  	S.visit[,] 	= J(S.obs,S.Nstates,0)
+		if (S.gethazard) 	S.hazard	 = J(S.obs,S.Nnextstates[from],0)
+		if (S.getsurvival)	S.survival	 = J(S.obs,S.Nnextstates[from],0)
 
 		//std loop
 		for (std=1;std<=S.K;std++) {
@@ -121,16 +121,16 @@ void predictms_core(`SS' S, `RS' from)
 				Best 	= J(0,1,.)
 				VCV 	= J(0,0,.)
 				Bindex 	= J(S.Ntrans,2,.)
-				i1 		=  1
+				i1 	=  1
 				for (i=1;i<=S.Ntrans;i++) {
-					Bi			= asarray(S.transinfo,(i,1))'
-					NBi			= rows(Bi)
+					Bi	= asarray(S.transinfo,(i,1))'
+					NBi	= rows(Bi)
 					Bindex[i,1] = i1
 					Bindex[i,2] = i1 + NBi - 1
-					Best		= Best\Bi
+					Best	    = Best\Bi
 					if (S.novcv[i]) VCV = blockdiag(VCV,J(NBi,NBi,0))
-					else			VCV = blockdiag(VCV,asarray(S.transinfo,(i,2)))
-					i1 			= Bindex[i,2] + 1
+					else		VCV = blockdiag(VCV,asarray(S.transinfo,(i,2)))
+					i1 = Bindex[i,2] + 1
 				}
 			}
 			else {
@@ -150,7 +150,7 @@ void predictms_core(`SS' S, `RS' from)
 				predictms_init_storage(S,from)
 				
 				if (abs(Best[b])<1) hstep = abs(Best[b])
-				else 				hstep = 1
+				else 		    hstep = 1
 				hstep = hstep * c("epsdouble") :^ (1/3)
 				newB[b] = Best[b] + hstep/2
 				
