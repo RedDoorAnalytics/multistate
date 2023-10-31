@@ -1,15 +1,15 @@
 
-local drive /Users/Michael/Documents/merlin
-cd "`drive'"
-adopath ++ "`drive'"
+local drive /Users/michael/My Drive/products
+cd "`drive'/merlin"
 adopath ++ "`drive'/merlin"
-adopath ++ "`drive'/stmerlin"
+adopath ++ "`drive'/merlin/merlin"
+adopath ++ "`drive'/stmerlin/stmerlin"
 clear all
 
 do ./build/buildmlib.do
 mata mata clear
 
-local drive /Users/Michael/Documents/reddooranalytics/products/multistate
+local drive /Users/Michael/My Drive/products/multistate
 cd "`drive'"
 adopath ++ "."
 adopath ++ "./msset"

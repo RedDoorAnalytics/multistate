@@ -18,8 +18,7 @@ local Pcm	pointer(struct merlin_struct scalar) colvector
 mata:
 
 // illness-death
-void predictms_analytic_illd(`SS' S, `RS' from,
-                `Pcm' Pmerlin, `RS' Nobs)
+void predictms_analytic_illd(`SS' S, `RS' from, `Pcm' Pmerlin, `RS' Nobs)
 {
 	t = S.predtime
 	

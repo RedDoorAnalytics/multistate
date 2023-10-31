@@ -1,0 +1,3 @@
+v 3
+d Stata package for multistate survival analysis
+p multistate
