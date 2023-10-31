@@ -1,6 +1,5 @@
 
-//local drive Z:/
-local drive /Users/Michael/Documents/merlin
+local drive /Users/Michael/My Drive/products/merlin
 cd "`drive'"
 adopath ++ "`drive'"
 adopath ++ "`drive'/merlin"
@@ -10,7 +9,7 @@ clear all
 do ./build/buildmlib.do
 mata mata clear
 
-local drive /Users/Michael/Documents/reddooranalytics/products/multistate
+local drive /Users/Michael/My Drive/products/multistate
 cd "`drive'"
 adopath ++ "."
 adopath ++ "./msset"
@@ -76,12 +75,11 @@ timer clear
 timer on 1
 predictms , transmat(tmat) models(m5 m4 m6) 	///
 			probability 						///
-			at1(age 55)                      	///
-			timevar(tvar)						simulate
-// 			ci from(2 3)
+			timevar(tvar)						
+		// 			ci from(2 3)
 timer off 1
 
-
+graphms
 
 cap rename _prob* prob*
 
