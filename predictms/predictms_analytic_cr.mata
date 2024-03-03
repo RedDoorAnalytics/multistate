@@ -24,7 +24,7 @@ void predictms_analytic_cr(`SS' S, `Pcm' Pmerlin, `RS' Nobs)
 		pred = predictms_analytic_cr_p(S,Pmerlin,Nobs,t)
 		
 		if (S.standardise) 	S.pt = S.pt :+ pred
-		else 				S.pt = pred
+		else 			S.pt = pred
 	}
 	
 	if (S.getlos | S.getrmst) {

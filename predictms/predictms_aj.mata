@@ -27,12 +27,10 @@ void predictms_aj(`SS' S, from)
 
 	//get cumulative hazards for each transition
 	for (trans=1; trans<=S.Ntrans; trans++) {
-
-		b			= predictms_get_b(S,trans)
-		gml			= *predictms_merlin_setup(S,b,S.obs,trans)
+		b		= predictms_get_b(S,trans)
+		gml		= *predictms_merlin_setup(S,b,S.obs,trans)
 		ch[,trans] 	= merlin_ch(S.predtime,gml)
 		rmexternal(st_local("GML"+strofreal(trans)))
-		
 	}
 
 	//change in ch since previous timepoint
@@ -68,7 +66,7 @@ void predictms_aj(`SS' S, from)
 	}
 
 	if (S.standardise) 	S.pt = S.pt :+ postP
-	else 				S.pt = postP
+	else 			S.pt = postP
 	
 	if (S.getlos | S.getrmst) {
 		hstep = S.predtime[2,1] :- S.predtime[1,1]

@@ -1,7 +1,6 @@
 //local drive Z:\
-local drive /Users/Michael/Documents
-//local drive c:
-cd "`drive'/multistate/multistate"
+local drive /Users/Michael/My Drive
+cd "`drive'/software/multistate"
 adopath ++ "."
 adopath ++ "./msset"
 adopath ++ "./predictms"
@@ -23,44 +22,38 @@ mat tmat = (.,1,2\.,.,3\.,.,.)
 stset _stop, enter(_start) failure(_status==1) scale(12) 
 tab size, gen(sz)
 
-stmerlin hormon age if _trans1==1, dist(cox) 
+stmerlin hormon age if _trans1==1, dist(rp) df(3) 
 est store m1
 
-stmerlin hormon age if _trans2==1, dist(cox)
+stmerlin hormon age if _trans2==1, dist(rp) df(3)
 est store m2
 
-stmerlin hormon age if _trans1==1, dist(rcs) df(3)
-est store m4
-
-stmerlin hormon age if _trans2==1, dist(rcs) df(3)
-est store m5
+// stmerlin hormon age if _trans1==1, dist(rcs) df(3)
+// est store m4
+//
+// stmerlin hormon age if _trans2==1, dist(rcs) df(3)
+// est store m5
 
 // }
+cap drop tvar
 cap range tvar 0 5 100
 
 set seed 1934
 timer clear
 timer on 1
-// predictms , cr models(m1 m2) 					///
-// 			probability							///
-// 			at1(age 55) 						///
-// 			timevar(tvar) simulate //ltruncated(1)
+predictms , cr models(m1 m2) 		///
+	probability			///
+	at1(age 55) 			///
+	timevar(tvar) 			///
+	standardise
 timer off 1
 
-cap rename _prob* prob*
-cap rename _los* los*
-
 timer on 2
-predictms , cr models(m4 m5) 					///
-			probability							///
-			at1(age 55) 						///
-			timevar(tvar)						///
-			los ///
-			simulate latent n(10000) //ltruncated(1)
+predictms , cr models(m1 m2) 		///
+	probability			///
+	at1(age 55) 			///
+	timevar(tvar) 			///
+	standardise aj
 timer off 2
 
-// merlin (_t hormon age if _trans==1, family(rp, df(3) failure(_d))) ///
-// 		(_t hormon age if _trans==2, family(rp, df(3) failure(_d)))
-		
-// predict cif1, cif at(age 55) zeros
-// predict cif2, cif at(age 55) zeros outcome(2)
+timer list

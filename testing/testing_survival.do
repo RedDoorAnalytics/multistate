@@ -1,7 +1,7 @@
 //local drive Z:\
-local drive /Users/Michael/Documents
+local drive /Users/Michael/My Drive/software
 //local drive c:
-cd "`drive'/multistate/multistate"
+cd "`drive'/multistate"
 adopath ++ "."
 adopath ++ "./msset"
 adopath ++ "./predictms"
@@ -31,16 +31,14 @@ predict s1, survival at(chemo 1 age 45) timevar(tvar)
 predictms, 	at1(chemo 1 age 45) 	///
 			singleevent 			///
 			probability 			///
-			los						///
-			rmst					///
 			timevar(tvar) ltruncated(1)
 
 rename _prob* prob*
-rename _los* los*
 
 predictms, 	at1(chemo 1 age 45) 	///
 			singleevent 			///
 			probability 			///
-			los						///
-			rmst					///
 			timevar(tvar) ltruncated(1) simulate
+
+su _prob*
+su prob*

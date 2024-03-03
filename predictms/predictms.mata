@@ -26,12 +26,10 @@ void predictms()
 	Nstarts = rows(from)
 
 	for (fr=1;fr<=Nstarts;fr++) {
-
 		for (at=1;at<=S.Nats;at++) {
 			S.at 	= at
 			S.Kind 	= 0
 			S.std 	= 0
-			
 			predictms_core(S,from[fr])
 		}
 
@@ -42,65 +40,65 @@ void predictms()
 		if (S.gethazard) 	predictms_post_predictions(S,from[fr],4)
 		if (S.getsurvival) 	predictms_post_predictions(S,from[fr],5)
 		if (S.getrmst) 		predictms_post_predictions(S,from[fr],6)
-
 	}
-	
 }
 
 void predictms_core(`SS' S, `RS' from)
 {
 	
-	//========================================================================================================================//
+	//====================================================================//
 	//point estimates
 	
-		ptlosvisit = S.getprobs | S.getlos | S.getvisit | S.getrmst
-		
-		if (S.getprobs)	 	S.pt[,] 	= J(S.obs,S.Nstates,0)											
-		if (S.getlos) 	 	S.los[,] 	= J(S.obs,S.Nstates,0)
-		if (S.getrmst) 	 	S.rmst[,] 	= J(S.obs,1,0)
-		if (S.getvisit)  	S.visit[,] 	= J(S.obs,S.Nstates,0)
-		if (S.gethazard) 	S.hazard	 = J(S.obs,S.Nnextstates[from],0)
-		if (S.getsurvival)	S.survival	 = J(S.obs,S.Nnextstates[from],0)
+	ptlosvisit = S.getprobs | S.getlos | S.getvisit | S.getrmst
+	
+	if (S.getprobs)	 	S.pt[,] 	= J(S.obs,S.Nstates,0)											
+	if (S.getlos) 	 	S.los[,] 	= J(S.obs,S.Nstates,0)
+	if (S.getrmst) 	 	S.rmst[,] 	= J(S.obs,1,0)
+	if (S.getvisit)  	S.visit[,] 	= J(S.obs,S.Nstates,0)
+	if (S.gethazard) 	S.hazard	 = J(S.obs,S.Nnextstates[from],0)
+	if (S.getsurvival)	S.survival	 = J(S.obs,S.Nnextstates[from],0)
 
-		//std loop
-		for (std=1;std<=S.K;std++) {
-			
-			S.std = std
-			
-			if (ptlosvisit) {
-				if 		(S.method==0 | S.method==3)	predictms_sim(S,from)		
-				else if (S.method==1)				predictms_aj(S,from)		
-				else if (S.method==2)				predictms_analytic(S,from)	
+	//std loop
+	for (std=1;std<=S.K;std++) {
+		
+		S.std = std
+		
+		if (ptlosvisit) {
+			if 	(S.method==0 | S.method==3) {
+				predictms_sim(S,from)
 			}
-			
-			if (S.gethazard | S.getsurvival) {
-				predictms_model_predict(S,from)
-			}
-
-		}
-
-		if (S.standardise) {
-			if (S.getprobs)	 	S.pt 		= S.pt :/ S.K
-			if (S.getlos) 	 	S.los 	 	= S.los :/ S.K
-			if (S.getrmst) 	 	S.rmst 	 	= S.rmst :/ S.K
-			if (S.getvisit)  	S.visit 	= S.visit :/ S.K
-			if (S.hasuser) 	 	S.user 		= S.user :/ S.K
-			if (S.getsurvival) 	S.survival 	= S.survival :/ S.K
+			else if (S.method==1) predictms_aj(S,from)		
+			else if (S.method==2) predictms_analytic(S,from)	
 		}
 		
-		//store
-		if (S.getprobs) 	{
-			if (S.method==0 | S.method==3) S.pt = S.pt :/ rowsum(S.pt)
-			asarray(S.probs,(from,S.at,1),S.pt)
+		if (S.gethazard | S.getsurvival) {
+			predictms_model_predict(S,from)
 		}
-		if (S.getlos) 		asarray(S.loss,(from,S.at,1),S.los)
-		if (S.getrmst) 		asarray(S.rmsts,(from,S.at,1),S.rmst)
-		if (S.getvisit) 	asarray(S.visits,(from,S.at,1),S.visit)
-		if (S.hasuser) 		asarray(S.users,(from,S.at,1),S.user)
-		if (S.gethazard) 	asarray(S.hazards,(from,S.at,1),S.hazard)
-		if (S.getsurvival) 	asarray(S.survivals,(from,S.at,1),S.survival)
+
+	}
+
+	if (S.standardise) {
+		if (S.getprobs)	 	S.pt 		= S.pt :/ S.K
+		if (S.getlos) 	 	S.los 	 	= S.los :/ S.K
+		if (S.getrmst) 	 	S.rmst 	 	= S.rmst :/ S.K
+		if (S.getvisit)  	S.visit 	= S.visit :/ S.K
+		if (S.hasuser) 	 	S.user 		= S.user :/ S.K
+		if (S.getsurvival) 	S.survival 	= S.survival :/ S.K
+	}
+	
+	//store
+	if (S.getprobs) 	{
+		if (S.method==0 | S.method==3) S.pt = S.pt :/ rowsum(S.pt)
+		asarray(S.probs,(from,S.at,1),S.pt)
+	}
+	if (S.getlos) 		asarray(S.loss,(from,S.at,1),S.los)
+	if (S.getrmst) 		asarray(S.rmsts,(from,S.at,1),S.rmst)
+	if (S.getvisit) 	asarray(S.visits,(from,S.at,1),S.visit)
+	if (S.hasuser) 		asarray(S.users,(from,S.at,1),S.user)
+	if (S.gethazard) 	asarray(S.hazards,(from,S.at,1),S.hazard)
+	if (S.getsurvival) 	asarray(S.survivals,(from,S.at,1),S.survival)
 		
-	//========================================================================================================================//
+	//====================================================================//
 	//confidence intervals
 
 	if (S.getcis) {

@@ -15,7 +15,7 @@ mata:
 `PS' predictms_merlin_setup(`SGS' S, `RR' b, `RS' N, `RS' trans, | `RC' t0)
 {
 	strtrans 	= strofreal(trans)
-	at 			= S.at
+	at 		= S.at
 	std 		= S.std
 	
 	//start by recalling merlin 
@@ -96,7 +96,8 @@ mata:
 	//--> this must be after zeros and at, so it's replaced appropriately
 	if (args()==5 & st_global("e(ltruncated1)")!="") {
 		st_view(lt=.,.,st_global("e(ltruncated1)"))
-		lt[|1,1\N,1|] = t0									//!! need to check any sorting doesn't screw this up
+		lt[|1,1\N,1|] = t0
+		//!! need to check any sorting doesn't screw this up
 	}
 
 	//post coefficients
