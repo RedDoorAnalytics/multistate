@@ -14,7 +14,7 @@ mata mata clear
 
 use "./data/multistate_example",clear
 set seed 98775
-keep if runiform()<0.2
+// keep if runiform()<0.2
 // qui {
 msset, id(pid) states(rfi osi) times(rf os)  cr
 mat tmat = (.,1,2\.,.,3\.,.,.) 
@@ -41,15 +41,15 @@ predictms , cr models(m1 m2) 		///
 	prob				///
 	at1(age 55) 			///
 	timevar(tvar) 			///
-	 standardise
+	 standardise 
 timer off 1
 
 timer on 2
-predictms , cr models(m1 m2) 		///
-	prob				///
-	at1(age 55) 			///
-	timevar(tvar) 			///
-	 standardise aj
+// predictms , cr models(m1 m2) 		///
+// 	prob				///
+// 	at1(age 55) 			///
+// 	timevar(tvar) 			///
+// 	 standardise aj
 timer off 2
 
 
@@ -66,7 +66,7 @@ _prob_at1_~2 |        100    .2247087    .1287533          0   .4009486
 _prob_at1_~3 |        100    .0026559    .0017294          0   .0059809
 */
 timer list
-su _prob* _los*
+su _prob* 
 
 /*
     Variable |        Obs        Mean    Std. dev.       Min        Max
