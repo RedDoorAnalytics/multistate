@@ -51,33 +51,36 @@ void predictms_core(`SS' S, `RS' from)
 	
 	ptlosvisit = S.getprobs | S.getlos | S.getvisit | S.getrmst
 	
-	if (S.getprobs)	 	S.pt[,] 	= J(S.obs,S.Nstates,0)											
-	if (S.getlos) 	 	S.los[,] 	= J(S.obs,S.Nstates,0)
-	if (S.getrmst) 	 	S.rmst[,] 	= J(S.obs,1,0)
-	if (S.getvisit)  	S.visit[,] 	= J(S.obs,S.Nstates,0)
-	if (S.gethazard) 	S.hazard	 = J(S.obs,S.Nnextstates[from],0)
-	if (S.getsurvival)	S.survival	 = J(S.obs,S.Nnextstates[from],0)
+	if (S.getprobs)	 	S.pt[,]    = J(S.obs,S.Nstates,0)											
+	if (S.getlos) 	 	S.los[,]   = J(S.obs,S.Nstates,0)
+	if (S.getrmst) 	 	S.rmst[,]  = J(S.obs,1,0)
+	if (S.getvisit)  	S.visit[,] = J(S.obs,S.Nstates,0)
+	if (S.gethazard) 	S.hazard   = J(S.obs,S.Nnextstates[from],0)
+	if (S.getsurvival)	S.survival = J(S.obs,S.Nnextstates[from],0)
 
-	//std loop
-	for (std=1;std<=S.K;std++) {
-		
-		S.std = std
-		
+	if (S.standardise & S.method==2) {
 		if (ptlosvisit) {
-			if 	(S.method==0 | S.method==3) {
-				predictms_sim(S,from)
-			}
-			else if (S.method==1) predictms_aj(S,from)		
-			else if (S.method==2) predictms_analytic(S,from)	
+			predictms_analytic_standardise(S,from)
 		}
-		
 		if (S.gethazard | S.getsurvival) {
-			predictms_model_predict(S,from)
+			predictms_model_predict_stand(S,from)
 		}
-
 	}
-
-	if (S.standardise) {
+	else {
+		for (std=1;std<=S.K;std++) {		
+			S.std = std
+			if (ptlosvisit) {
+				if 	(S.method==0 | S.method==3) {
+					predictms_sim(S,from)
+				}
+				else if (S.method==2) predictms_analytic(S,from)
+				else if (S.method==1) predictms_aj(S,from)
+			}
+			if (S.gethazard | S.getsurvival) {
+				predictms_model_predict(S,from)
+			}
+		}		
+		//means
 		if (S.getprobs)	 	S.pt 		= S.pt :/ S.K
 		if (S.getlos) 	 	S.los 	 	= S.los :/ S.K
 		if (S.getrmst) 	 	S.rmst 	 	= S.rmst :/ S.K
@@ -87,7 +90,7 @@ void predictms_core(`SS' S, `RS' from)
 	}
 	
 	//store
-	if (S.getprobs) 	{
+	if (S.getprobs) {
 		if (S.method==0 | S.method==3) S.pt = S.pt :/ rowsum(S.pt)
 		asarray(S.probs,(from,S.at,1),S.pt)
 	}
@@ -161,31 +164,38 @@ void predictms_core(`SS' S, `RS' from)
 					}
 					else asarray(S.transinfo,1,newB')
 					
-					for (std=1;std<=S.K;std++) {
-						
-						S.std = std
+					if (S.standardise & S.method==2) {
 						if (ptlosvisit) {
-							if 		(S.method==0 | S.method==3)	predictms_sim(S,from)
-							else if (S.method==1)				predictms_aj(S,from)	
-							else if (S.method==2)				predictms_analytic(S,from)
+							predictms_analytic_standardise(S,from)
 						}
-						if (S.gethazard | S.getsurvival) 		predictms_model_predict(S,from)
-						
+						if (S.gethazard | S.getsurvival) {
+							predictms_model_predict_stand(S,from)
+						}
 					}
-
-					if (S.standardise) {
-						if (S.getprobs) 	S.pt 		= S.pt 			:/ S.K
-						if (S.getlos) 	 	S.los   	= S.los   		:/ S.K
-						if (S.getvisit)  	S.visit 	= S.visit  		:/ S.K
-						if (S.hasuser) 	 	S.user  	= S.user   		:/ S.K
-						if (S.getsurvival) 	S.survival 	= S.survival 	:/ S.K
+					else {
+						for (std=1;std<=S.K;std++) {
+							S.std = std
+							if (ptlosvisit) {
+								if 	(S.method==0 | S.method==3)	predictms_sim(S,from)
+								else if (S.method==1)			predictms_aj(S,from)	
+								else if (S.method==2)			predictms_analytic(S,from)
+							}
+							if (S.gethazard | S.getsurvival) 		predictms_model_predict(S,from)
+						}
+						if (S.standardise) {
+							if (S.getprobs) 	S.pt 		= S.pt 	:/ S.K
+							if (S.getlos) 	 	S.los   	= S.los :/ S.K
+							if (S.getvisit)  	S.visit 	= S.visit :/ S.K
+							if (S.hasuser) 	 	S.user  	= S.user  :/ S.K
+							if (S.getsurvival) 	S.survival 	= S.survival :/ S.K
+						}
 					}
-
+					
 					//scale probs to total of 1
 					if (S.getprobs & (S.method==0 | S.method==3)) 	S.pt = S.pt :/ rowsum(S.pt)
 
 					//store lhs
-					if (S.getprobs) 	pt 			= S.pt //logit(S.pt)
+					if (S.getprobs) 	pt 		= S.pt //logit(S.pt)
 					if (S.getlos) 	 	los   		= S.los
 					if (S.getrmst)  	rmst 		= S.rmst
 					if (S.getvisit)  	visit 		= S.visit
@@ -207,30 +217,37 @@ void predictms_core(`SS' S, `RS' from)
 					//reset
 					predictms_init_storage(S,from)
 
-					//1 or std loop
-					for (std=1;std<=S.K;std++) {
-						
-						S.std = std
+					if (S.standardise & S.method==2) {
 						if (ptlosvisit) {
-							if 		(S.method==0 | S.method==3)	predictms_sim(S,from)
-							else if (S.method==1)				predictms_aj(S,from)	
-							else if (S.method==2)				predictms_analytic(S,from)
+							predictms_analytic_standardise(S,from)
 						}
-						if (S.gethazard | S.getsurvival) 		predictms_model_predict(S,from)
-						
+						if (S.gethazard | S.getsurvival) {
+							predictms_model_predict_stand(S,from)
+						}
 					}
+					else {
+						//1 or std loop
+						for (std=1;std<=S.K;std++) {
+							S.std = std
+							if (ptlosvisit) {
+								if 	(S.method==0 | S.method==3)	predictms_sim(S,from)
+								else if (S.method==1)			predictms_aj(S,from)	
+								else if (S.method==2)			predictms_analytic(S,from)
+							}
+							if (S.gethazard | S.getsurvival) 		predictms_model_predict(S,from)
+						}
 
-					if (S.standardise) {
-						if (S.getprobs) 	S.pt 		= S.pt 			:/ S.K
-						if (S.getlos) 	 	S.los   	= S.los    		:/ S.K
-						if (S.getvisit)  	S.visit 	= S.visit  		:/ S.K
-						if (S.hasuser) 	 	S.user  	= S.user   		:/ S.K
-						if (S.getsurvival) 	S.survival 	= S.survival 	:/ S.K
+						if (S.standardise) {
+							if (S.getprobs) 	S.pt 		= S.pt 			:/ S.K
+							if (S.getlos) 	 	S.los   	= S.los    		:/ S.K
+							if (S.getvisit)  	S.visit 	= S.visit  		:/ S.K
+							if (S.hasuser) 	 	S.user  	= S.user   		:/ S.K
+							if (S.getsurvival) 	S.survival 	= S.survival 	:/ S.K
+						}
 					}
-
+					
 					//scale probs to total of 1
 					if (S.getprobs & (S.method==0 | S.method==3)) 	S.pt = S.pt :/ rowsum(S.pt)	
-					
 
 				//deriv
 				if (S.getprobs) 	asarray(A,b,(pt:-S.pt):/hstep)

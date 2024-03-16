@@ -23,12 +23,17 @@ tab size, gen(sz)
 
 stmerlin hormon age if _trans1==1, dist(rp) df(3) 
 est store m1
+cap drop tvar
+cap range tvar 0 5 100
+timer clear 
+timer on 1
+// predict s1, at(age 55) standardise rmst timevar(tvar)
+timer off 1
 
 stmerlin hormon age if _trans2==1, dist(rp) df(3)
 est store m2
 
-cap drop tvar
-cap range tvar 0 5 100
+
 
 /*
 - standardise will require timevar() option
@@ -36,22 +41,25 @@ cap range tvar 0 5 100
     replicated across the global dataset touse
 */
 
-
-set seed 1934
-timer clear
-timer on 1
+timer on 2
 predictms , cr models(m1 m2) 		///
-	probability			///
+	los			///
 	at1(age 55) 			///
 	timevar(tvar) 			///
-	standardise
-timer off 1
+	 standardise 
+timer off 2
 
 /*
 tvar 100 obs
 dataset - 1108
 timer on second run - 22.41 second 
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+_prob_at1_~1 |        100    .7726354    .1304271   .5930705          1
+_prob_at1_~2 |        100    .2247087    .1287533          0   .4009486
+_prob_at1_~3 |        100    .0026559    .0017294          0   .0059809
 */
 timer list
-
+su _prob*
 
