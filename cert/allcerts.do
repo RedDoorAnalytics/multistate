@@ -1,5 +1,5 @@
 
-local drive /Users/michael/My Drive/products
+local drive /Users/michael/My Drive/software
 cd "`drive'/merlin"
 adopath ++ "`drive'/merlin"
 adopath ++ "`drive'/merlin/merlin"
@@ -9,7 +9,7 @@ clear all
 do ./build/buildmlib.do
 mata mata clear
 
-local drive /Users/Michael/My Drive/products/multistate
+local drive /Users/Michael/My Drive/software/multistate
 cd "`drive'"
 adopath ++ "."
 adopath ++ "./msset"
@@ -24,6 +24,10 @@ do ./build/buildmlib.do
 mata mata clear
 
 clear all
+
+di as text "Running survival tests"
+
+do ./cert/survival.do
 
 di as text "Running Markov tests"
 
