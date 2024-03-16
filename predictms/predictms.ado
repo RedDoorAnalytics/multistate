@@ -1,162 +1,98 @@
 *! version 4.4.1  17jan2023 MJC
 
 /*
-History - multistate/predictms
-17jan2023: version 4.4.1 - chintpoints() option added to allow the user to specify the number of 
-						   quadrature points used in any numerical integrations
-22dec2021: version 4.4.0 - Cox model is now supported with predictms (ci's not supported yet)
-                         - added moremata check
-02sep2021: version 4.3.1 - bug fix, graphms ignored extra options; now fixed
-                         - bug fix, when rmst was called with simulate it would error out; now fixed
-14mar2021: version 4.3.0 - accuracy and efficiency of numerical integration based predictions from an illness-death and extended 
-                           illness death model are improved
-                         - support for family(hazard) now documented
-                         - bug fix for numerical integration based predictions of illness-death and extended illness-death, failing 
-                           to pass the entry time appropriately would return a vector of 0s instead of appropriate probabilities; 
-                           now fixed
-                         - bug fix; if reset or tsreset() was used with an illness-death model, then numerical integration was used 
-                           to calculate predictions instead of simulation, giving (obvious) incorrect results - this has been fixed
-                         - bug fix when using a relative survival model within predictms, would attempt to call bhazard() when it 
-                           should only simulate from the relative survival function; now fixed
-                         - warning added when passing a relative survival model to -predictms-, to ensure the expected rate has been 
-                           modelled.
-09feb2021: version 4.2.1 - bug fix; check on transmatrix() skipped final row, so could erroneously exit telling the user the number 
-                               of transitions and models didn't match - now fixed
-26jan2012: version 4.2.0 - interactive & freqat() options added to msboxes
-16dec2020: version 4.1.0 - family(pwexponential) synced & doc'd
-28oct2020: version 4.0.0 - delta method is now the default for ci calculation for methods that use numerical integration or the hybrid AJ estimator for predictions
-                                -> this is substantially faster than the bootstrap
-                                -> includes contrasts
-                                -> bootstrap is still the only method available for large-sample simulation based predictions
-                         - bootstrap option added to override the default delta method
-                         - latent option now documented (added in 3.0.0 to invoke latent times simulation, overiding the default total hazard + multinomial draws method)
-                         - log normal, log logistic and general log cumulative hazard scale models added
-                         - memory leak fixed, resulting in speed improvements
-11sep2020: version 3.0.3 - msaj option enter() renamed to ltruncated() for consistency with survsim & predictms
-08sep2020: version 3.0.2 - rmst missed from standardise calculation; now fixed
-                         - ci + visit or rmst error'ed; now fixed
-                         - storage improved, so bootstrap cis slightly faster
-01sep2020: version 3.0.1 - left over print statements when simulating; now removed
-24aug2020: version 3.0.0 - predictms rewrite:
-                                 - Stata version 15.1 now required
-                                 - all models must be fitted using stmerlin or merlin
-                                 - transprob renamed to probability
-                                 - survival renamed to singleevent for transmat() shorthand
-                                 - ltruncated() introduced, which defines the starting time for all predictions
-                                 - rmst added to predict restricted mean survival time, i.e. total time spent in non-absorbing states
-                                 - hazard and survival options added to predict transition specific functions
-                                 - standard survival, competing risks, illness-death and extended illness-death predictions are now 
-                                   calculated using numerical integration as the default method, rather than large-sample simulation
-                                 - the default method of simulation to obtain predictions uses Beyersmann et al., with a new -latent- option
-                                   to use the previous default of latent times
-                                 - each simulated dataset can now be saved
-                                 - ci now displays a bootstrap output so it can be monitored
-                                 - dist(exp) failed; now fixed
-                                 - ci's now calculated on log/atanh/logit scale and back transformed to ensure appropriate bounds
-                         - graphms added, with help file
-                         - help files substantially improved, new main multistate help file added
-*/
+History
 
-/*
-History - galahad
+17jan2023 version 4.4.1:
+- chintpoints() option added to allow the user to specify the number of 
+  quadrature points used in any numerical integrations
 
-MJC 21mar2020: version 1.3.0 - some behind the scenes syncing with survsim
-MJC 17mar2020: version 1.2.1 - bug fix; singleevent option failed -> now fixed
-                                 - help file example fixes for new transprob option
-                                 - bug fix; missing error check, Cox model is not currently supported
-MJC 07mar2020: version 1.2.0 - hazard option added to predictms to predict each transition-specific hazard function
-                                 - survival changed to singleevent
-                                 - survival now predicts transition-specific survival functions
-                                 - transprob option now required to request transition probabilities
-                                 - bug fix: visit with cis incorrectly returned los predictions instead -> now fixed.
-                                 - bug fix: contrasts with visit, new variable names were incorrect -> now fixed
-                                 - bug fix: userlink, transformation not applied to point estimate when calculating CI -> now fixed
-                                 - bug fix: contrasts and ci, point estimates weren't passed -> now fixed
-MJC 30jan2020: version 1.1.0 - bug fix displaying dots for multiple ats()
-                                 - aj wasn't synced properly - now working
-                                 - synced multiple timescales with all survival models
-                                 - added timevar to ret list for use with ghgraph
-                                 - ghgraph added, including help file
-                                 - bug fix; family(logchazard) wasn't synced - now fixed
-MJC 28jan2020: version 1.0.0
-*/
+22dec2021 version 4.4.0:
+- Cox model is now supported with predictms (ci's not supported yet)
+- added moremata check
 
-/*
-History - multistate/predictms
-MJC 13aug2019: version 2.3.2 - bug fix: missed an edit in 2.3.1 fix preventing aj to work in predictms (merlin function names); now fixed
-                             - error check added for streg, d(ggamma) combined with aj - not supported
-MJC 25jul2019: version 2.3.1 - bug fix: edits in merlin function names caused predictms to fail; now fixed
-                             - error check added for bhtime with strcs models - not currently supported
-MJC 03jun2019: version 2.3.0 - bug fix: stpm2 and strcs models failed, introduced in 2.2.0; now fixed
-                             - streg, dist(lognormal) now allowed with clock-forward models
-                             - bug fix: streg, dist(lognormal) with reset incorrectly assumed loglogistic; now fixed
-MJC 28may2019: version 2.2.0 - bug fix: with novcv() when ci not specified introduced in 2.1.0; now fixed
-                             - bug in error check for log normal requiring reset; now fixed
-                             - Generalised gamma streg model now supported when used in the models() syntax
-                             - bug fix in msaj when number of transitions was not equal to number dimension of transmatrix()
-MJC 15apr2019: version 2.1.0 - novcv() option added to use mean vector instead of draws in CI calculations
-MJC 19mar2019: version 2.0.1 - help file improved for msaj
-MJC 23feb2018: version 2.0.0 - bug fix: los was incorrectly scaled to 1, introduced in 1.2.0. Now fixed.
-                                 - normal approximation for CIs is now the default. percentile option replaces normal.
-                                 - bug fix: level() was ignored in CI calculations, always assumed 95%. Now fixed.
-                                 - gen() removed
-                                 - bug fix: in some cases mm_root_vec produced an error when solving the root. Now fixed.
-                                 - all predictions now available in one call
-                                 - infinite at#()s added (limited to 50 for error check reasons)
-                                 - at() changed to at1()
-                                 - difference option added
-                                 - added atref(#) - default 1
-                                 - standardise option added to calculate standardised (population-averaged) predictions
-                                 - bug fix: with Stata 15 and streg (apart from dist(exp)), with at2(), the ancilary parameter constant was ignored. Now fixed.
-                                 - _time = 0 now allowed with normal ci's
-                                 - userfunction() added for user-defined prediction function, subroutines for probs and los
-                                 - userlink() added for normal cis of userfunction() - default identity, can also be log or logit
-                                 - cr option added to avoid specifying a transition matrix. For use with models() only.
-                                 - bug fix: reset now synced with root-finding updates for stpm2 and strcs models
-                                 - outsample added
-                                 - stms added
-                                 - enter() removed, now min(timevar or _t)
-                                 - aj added for Aalen-Johansen estimator with Markov models
-                                 - reversible transitions now allowed
-MJC 17nov2017: version 1.2.1 - bug fix with simulation from strcs models with delayed entry
-MJC 13nov2017: version 1.2.0 - tscale2() and time2() added for multiple timescales
-                                 - probabilities/los scaled to 1/t
-release moved to website
-MJC 21nov2016: verison 1.1.1 - bug fix
-MJC 16nov2016: version 1.1.0 - some re-writes of source code for massive speed improvements when root-finding required
-                                 - trans#() syntax removed, now parsing is done automatically and using covariates expanded using msset
-                                 - model#() changed to models()
-                                 - improvements to help files
-                                 - covariates() added to msset to create transition-specific dummies, which must be used in model fitting (if required)
-                                 - default n() now 100,000, or 10,000 with ci
-                             - survival added to calculate all predictions on a standard single event model
-MJC 09aug2016: version 1.0.1 - gen() option to allow a stub for created variables, default is pred
-MJC 12jul2016: version 1.0.0 
+02sep2021 version 4.3.1:
+- bug fix, graphms ignored extra options; now fixed
+- bug fix, when rmst was called with simulate it would error out; now fixed
 
-Development
-stms not allowed yet
-MJC 19may2015: version 1.1.0 - error check on transmatrix() added
-							 - separate models allowed through model#(name, [at()])
-MJC 14may2015: verison 1.0.8 - added error check not allowing AFT weibull or exp
-MJC 11may2015: verison 1.0.7 - timevar() added
-                             - basic graph option added which creates stacked plots
-MJC 11may2015: verison 1.0.6 - fixed bug with weibull and forward approach
-                             - Error checks improved                                         
-MJC 09may2015: version 1.0.5 - fixed bug in from() which occurred when anything but from(1) was used
-                             - fixed bug in forward calculations when enter>0
-                             - fixed bug that only calculated predictions to states you could go to from first state
-MJC 09may2015: version 1.0.4 - clock-forward approach now the default (simulations incorporate delayed entry), reset option added to use clock-reset
-                             - only reset approach allowed with streg, dist(lnormal)
-MJC 06may2015: version 1.0.3 - now synced with streg, dist(exp|weib|gompertz|llogistic|lnormal)
-                             - normal approximation added for CI calculations
-MJC 15apr2015: version 1.0.2 - when no ci's calculated it was using first draw from MVN, this has been fixed to be e(b)
-MJC 01apr2015: version 1.0.1 - stpm2 simulation improved by creating and passing struct
-                             - odds and normal scales added for stpm2 models
-MJC 31mar2015: version 1.0.0
+14mar2021 version 4.3.0:
+- accuracy and efficiency of numerical integration based predictions from an 
+  illness-death and extended illness death model are improved
+- support for family(hazard) now documented
+- bug fix for numerical integration based predictions of illness-death and 
+  extended illness-death, failing to pass the entry time appropriately would 
+  return a vector of 0s instead of appropriate probabilities; now fixed
+- bug fix; if reset or tsreset() was used with an illness-death model, then 
+  numerical integration was used to calculate predictions instead of 
+  simulation, giving (obvious) incorrect results - this has been fixed
+- bug fix when using a relative survival model within predictms, would attempt 
+  to call bhazard() when it should only simulate from the relative survival 
+  function; now fixed
+- warning added when passing a relative survival model to -predictms-, to 
+  ensure the expected rate has been modelled.
+  
+09feb2021 version 4.2.1:
+- bug fix; check on transmatrix() skipped final row, so could erroneously 
+  exit telling the user the number of transitions and models didn't match;
+  now fixed
+  
+26jan2012 version 4.2.0:
+- interactive & freqat() options added to msboxes
+
+16dec2020 version 4.1.0:
+- family(pwexponential) synced & doc'd
+
+28oct2020 version 4.0.0:
+- delta method is now the default for ci calculation for methods that use 
+  numerical integration or the hybrid AJ estimator for predictions
+  -> this is substantially faster than the bootstrap
+  -> includes contrasts
+  -> bootstrap is still the only method available for large-sample simulation 
+     based predictions
+- bootstrap option added to override the default delta method
+- latent option now documented (added in 3.0.0 to invoke latent times 
+  simulation, overiding the default total hazard + multinomial draws method)
+- log normal, log logistic and general log cumulative hazard scale models added
+- memory leak fixed, resulting in speed improvements
+
+11sep2020 version 3.0.3:
+- msaj option enter() renamed to ltruncated() for consistency with 
+  survsim & predictms
+  
+08sep2020 version 3.0.2:
+- rmst missed from standardise calculation; now fixed
+- ci + visit or rmst error'ed; now fixed
+- storage improved, so bootstrap cis slightly faster
+
+01sep2020 version 3.0.1:
+- left over print statements when simulating; now removed
+
+24aug2020 version 3.0.0:
+- predictms rewrite:
+- Stata version 15.1 now required
+- all models must be fitted using stmerlin or merlin
+- transprob renamed to probability
+- survival renamed to singleevent for transmat() shorthand
+- ltruncated() introduced, which defines the starting time for all predictions
+- rmst added to predict restricted mean survival time, i.e. total time spent 
+  in non-absorbing states
+- hazard and survival options added to predict transition specific functions
+- standard survival, competing risks, illness-death and extended illness-death 
+  predictions are now calculated using numerical integration as the default 
+  method, rather than large-sample simulation
+- the default method of simulation to obtain predictions uses Beyersmann et 
+  al., with a new -latent- option to use the previous default of latent times
+- each simulated dataset can now be saved
+- ci now displays a bootstrap output so it can be monitored
+- dist(exp) failed; now fixed
+- ci's now calculated on log/atanh/logit scale and back transformed to ensure 
+  appropriate bounds
+- graphms added, with help file
+- help files substantially improved, new main multistate help file added
 */
 
 program define predictms, sortpreserve properties(st) rclass
-	version 15.1
+	version 17
 	syntax 			, 		///
                                                 ///
         [					///
