@@ -67,15 +67,18 @@ void predictms_analytic_surv(`SS' S, `Pcm' Pmerlin, `RS' Nobs)
 
 void predictms_analytic_s_stand(`SS' S, `Pcm' Pmerlin)
 {
+	`gml' gml
 	`RC' t
 	`RS' Nt
 	
+	gml = *Pmerlin[1]
 	t = S.predtime
 	Nt = rows(t)
-	if (S.getprobs) {
+	
+	if (S.getprobs) {	
 		for (i=1;i<=Nt;i++) {
 			S.pt[i,1] = 	///
-			    predictms_analytic_s_p_stand(S,Pmerlin,t[i])
+			    predictms_analytic_s_p_stand(S,gml,t[i])
 		}
 		S.pt[,2] = 1 :- S.pt[,1]
 	}
@@ -88,7 +91,7 @@ void predictms_analytic_s_stand(`SS' S, `Pcm' Pmerlin)
 		for (i=1;i<=Nt;i++) {
 			for (j=1;j<=Nqp;j++) {
 				res[i,j] = predictms_analytic_s_p_stand(S,
-						Pmerlin,qp[i,j])
+						gml,qp[i,j])
 			}
 		}
 		S.los[,1]  = res * gq[,2] :* (t:-S.enter) :/ 2
@@ -99,11 +102,8 @@ void predictms_analytic_s_stand(`SS' S, `Pcm' Pmerlin)
 	if (S.hasuser) predictms_calc_user(S)		
 }
 
-`RS' predictms_analytic_s_p_stand(`SS' S, `Pcm' Pmerlin, `RS' t)
+`RS' predictms_analytic_s_p_stand(`SS' S, `gml' gml, `RS' t)
 {
-	`gml' gml
-	gml	= *Pmerlin[1]
-	pred 	= J(1,2,.)
 	ch	= (*gml.Pch[1])(gml,J(S.K,1,t))
 	_editmissing(ch,0)
 	pred = mean(exp(-ch))
