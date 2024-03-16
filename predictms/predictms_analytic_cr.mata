@@ -119,43 +119,12 @@ void predictms_analytic_cr_stand(`SS' S, `Pcm' Pmerlin, `RS' Nobs)
 						Pmerlin,Nobs,qp[i,j])	///
 					:* gq[j,2] 
 			}
-			res = res :* (t[i]:-S.enter):/2
-			S.los[i,] = res
-		}
-		
-//		
-// 		S.los[,1]  = res * gq[,2] :* (t:-S.enter) :/ 2
-// 		if (S.getlos) S.los[,2] = t :- S.enter :- S.los[,1]	
-//	
-	
-	
-	
+			S.los[i,] = res :* (t[i]:-S.enter):/2
+		}	
 	
 	}	
 	
-	
-// 		Nqp 	= S.chips
-// 		gq 	= predictms_gq(Nqp)
-// 		qp	= (t:-S.enter) :/ 2 :* J(Nobs,1,gq[,1]') 	///
-// 				:+ (t:+S.enter) :/2
-//		
-// 		pred	= J(Nobs,S.Nstates,0)
-// 		for (q=1; q<=Nqp; q++) {
-// 			pred = pred :+ 					///
-// 			predictms_analytic_cr_p(S,Pmerlin,Nobs,qp[,q]) 	///
-// 				:* gq[q,2]
-// 		}
-// 		pred = pred :* (t:-S.enter) :/ 2
-//		
-// 		if (S.standardise) 	S.los = S.los :+ pred
-// 		else 			S.los = pred
-// 	}
-//	
-// 	if (S.getrmst) {
-// 		if (S.standardise) 	S.rmst = S.rmst :+ pred[,1]
-// 		else 			S.rmst = pred[,1]
-// 	}
-
+	if (S.getrmst) S.rmst = S.los[,1]
 	if (S.hasuser) predictms_calc_user(S)
 }
 

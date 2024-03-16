@@ -163,7 +163,7 @@ void predictms_calc_rmst(`SS' S, `RM' stimes, `RM' states)
 		if (S.Nnextstates[s]) rmst = rmst :+ S.los[,s]
 	}
 	if (S.standardise) 	S.rmst = S.rmst :+ rmst
-	else 				S.rmst = rmst
+	else 			S.rmst = rmst
 }
 
 void predictms_calc_visit(`SS' S, `RM' stimes, `RM' states)
@@ -182,7 +182,7 @@ void predictms_calc_visit(`SS' S, `RM' stimes, `RM' states)
 		}
 		temppred = colsum(temppred :> 0):/S.N
 		if (S.standardise) 	S.visit[t,] = S.visit[t,] :+ temppred
-		else 				S.visit[t,] = temppred
+		else 			S.visit[t,] = temppred
 	}
 }
 
