@@ -164,7 +164,7 @@ void predictms_core(`SS' S, `RS' from)
 					}
 					else asarray(S.transinfo,1,newB')
 					
-					if (S.standardise & S.method==2) {
+					if (S.standardise & S.method==2 & (S.nicode==1 | S.nicode==2)) {
 						if (ptlosvisit) {
 							predictms_analytic_standardise(S,from)
 						}
@@ -217,7 +217,7 @@ void predictms_core(`SS' S, `RS' from)
 					//reset
 					predictms_init_storage(S,from)
 
-					if (S.standardise & S.method==2) {
+					if (S.standardise & S.method==2 & (S.nicode==1 | S.nicode==2)) {
 						if (ptlosvisit) {
 							predictms_analytic_standardise(S,from)
 						}
