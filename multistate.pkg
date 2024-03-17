@@ -1,7 +1,7 @@
 v 3
 d multistate: Multi-state survival analysis
 d Author: Michael J. Crowther, Micki Hill, Paul C. Lambert
-d Distribution-Date: 20210902
+d Distribution-Date: 20240317
 f multistate.sthlp
 f lmultistate.mlib
 f msset/msset.ado

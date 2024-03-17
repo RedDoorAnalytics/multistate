@@ -1,7 +1,10 @@
-*! version 4.4.1  17jan2023 MJC
+*! version 4.5.0  17mar2024
 
 /*
 History
+
+17mar2024 version 4.5.0:
+- computational gains for standardise with singleevent and competing risks 
 
 17jan2023 version 4.4.1:
 - chintpoints() option added to allow the user to specify the number of 
