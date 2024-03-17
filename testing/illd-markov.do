@@ -1,6 +1,5 @@
-local drive /Users/Michael/Documents
-//local drive c:
-cd "`drive'/multistate/multistate"
+local drive /Users/Michael/My Drive/software/multistate
+cd "`drive'"
 adopath ++ "."
 adopath ++ "./msset"
 adopath ++ "./predictms"
@@ -10,7 +9,7 @@ adopath ++ "./msaj"
 adopath ++ "./graphms"
 clear all
 
-tr:do ./build/buildmlib.do
+do ./build/buildmlib.do
 mata mata clear
 
 // Illness-death example, clock-forward, only one main timescale, time since diagnosis
@@ -36,17 +35,18 @@ merlin (_t age if _trans==2, family(rp, df(1) failure(_d)))
 est store m2
 
 //trans 3
-merlin (_t 	age																///
-			if _trans==3													///
-			, family(rp, df(1) failure(_d) ltruncated(_t0)) timevar(_t))	///
-			, 
+merlin (_t 	age		///
+		if _trans==3	///
+	, family(rp, df(1) failure(_d) ///
+	ltruncated(_t0)) timevar(_t))	///
+	, 
 est store m3
 
 range time 0 10 100
 
 predictms , 	transmat(tmat)		///
-				probability			///
-				models(m1 m2 m3) 	///
-				at1(age 45)			///
-				timevar(time)  		///
-				los
+		probability		///
+		models(m1 m2 m3) 	///
+		at1(age 45)		///
+		timevar(time)  		///
+		stand

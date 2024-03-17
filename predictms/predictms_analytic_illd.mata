@@ -13,6 +13,7 @@ local PS	pointer(struct predictms_struct scalar) scalar
 local SS	struct predictms_struct scalar
 local PC	pointer colvector
 local gml 	struct merlin_struct scalar
+local cgml 	struct merlin_struct colvector
 local Pcm	pointer(struct merlin_struct scalar) colvector
 
 mata:
@@ -130,4 +131,121 @@ void predictms_analytic_illd(`SS' S, `RS' from, `Pcm' Pmerlin, `RS' Nobs)
 	return(pred)
 }
 
+
+// illness-death, standardised
+void predictms_analytic_illd_std(`SS' S, `RS' from, `Pcm' Pmerlin, `RS' Nobs)
+{
+	`RC' t
+	`RS' Nt
+	`gml' mlob
+	`cgml' gml
+	gml = J(3,1,mlob)
+	
+	t = S.predtime
+	Nt = rows(t)
+	gml[1] = *Pmerlin[1]
+	gml[2] = *Pmerlin[2]
+	gml[3] = *Pmerlin[3]
+	
+	if (S.getprobs) {
+		if (from==1) {
+			for (i=1;i<=Nt;i++) {
+				S.pt[i,] = predictms_analytic_illd_p1_std(gml,t[i],S.enter,S.chips)
+			}
+		}
+		else {
+			for (i=1;i<=Nt;i++) {
+				S.pt[i,] = predictms_analytic_illd_p2_std(gml,t[i],S.enter)
+			}
+		}
+	}
+	
+	if (S.getlos | S.getrmst) {
+		
+		Nqp 	= S.chips
+		gq 	= predictms_gq(Nqp)
+		qp	= (t:-S.enter) :/ 2 :* J(Nobs,1,gq[,1]') :+ (t:+S.enter) :/2
+		if (from==1) { 
+			pred	= J(Nobs,3,0)
+			for (q=1; q<=Nqp; q++) {
+				pred = pred :+ predictms_analytic_illd_prob1(Pmerlin,qp[,q],S.enter,S.chips) :* gq[q,2]
+			}
+		}
+		else {
+			pred	= J(Nobs,3,0)
+			for (q=1; q<=Nqp; q++) {
+				pred = pred :+ predictms_analytic_illd_prob2(Pmerlin,qp[,q],S.enter) :* gq[q,2]
+			}
+		}
+		pred = pred :* (t:-S.enter) :/ 2
+		
+		if (S.standardise) 	S.los = S.los :+ pred
+		else 				S.los = pred
+		
+	}
+		
+	if (S.getrmst) {
+		if (S.standardise) 	S.rmst = S.rmst :+ pred[,1] :+ pred[,2]
+		else 				S.rmst = pred[,1] :+ pred[,2]
+	}
+
+	if (S.hasuser) predictms_calc_user(S)	
+		
+}
+
+`RM' predictms_analytic_illd_p1_std(`cgml' gml, `RS' t, `RS' enter, `RS' chips)
+{
+	Nobs 	= rows(t)
+	result 	= J(Nobs,3,.)
+
+	//1
+	ch = (*gml[1].Pch[1])(gml[1],t) :+ (*gml[2].Pch[1])(gml[2],t)
+ 	_editmissing(ch,0)
+	result[,1] = exp(-ch)
+
+	//2
+	Ngq 	= chips
+	gq 	= predictms_gq(Ngq)
+	qw	= (t:-enter) :/ 2
+	qp	= qw :* J(Nobs,1,gq[,1]') :+ (t:+enter):/2
+	pred 	= J(Nobs,1,0)
+	
+	for (q=1; q<=Ngq; q++) {					
+		res = (*gml[1].Plogh[1])(gml[1],qp[,q]) :- (*gml[1].Pch[1])(gml[1],qp[,q])
+		res = res :- (*gml[2].Pch[1])(gml[2],qp[,q])
+		res = res :- (*gml[3].Pch[1])(gml[3],t,qp[,q]) :+ (*gml[3].Pch[1])(gml,qp[,q],qp[,q])
+		pred = pred :+ exp(res :+ log(gq[q,2]))
+	}
+	pred = pred :* qw
+	
+	if (missing(pred)==Nobs) merlin_error("Error in numerical integration; try the -simulate- option")
+	
+ 	_editmissing(pred,0)
+	result[,2] = pred
+	
+	//delayed entry
+	if (enter) {
+		result[,(1,2)] = result[,(1,2)] :/ exp(-(*gml[1].Pch[1])(gml[1],J(Nobs,1,enter)))
+		result[,(1,2)] = result[,(1,2)] :/ exp(-(*gml[2].Pch[1])(gml[2],J(Nobs,1,enter)))
+	}
+	
+	//3
+	result[,3] = 1 :- result[,1] :- result[,2]
+	return(result)
+}
+
+`RM' predictms_analytic_illd_p2_std(`cgml' gml, `RC' t, `RS' enter)
+{	
+	Nobs 		= rows(t)
+	pred 		= J(Nobs,3,0)
+	ch		= (*(gml[3].Pch[1]))(gml,t)
+	_editmissing(ch,0)
+	pred[,2] 	= exp(-ch)
+	
+	if (enter) {
+		pred[,2] = pred[,2] :/ exp(-(*gml[3].Pch[1])(gml,J(Nobs,1,enter)))
+	}
+	pred[,3]	= 1:-pred[,2]	
+	return(pred)
+}
 end

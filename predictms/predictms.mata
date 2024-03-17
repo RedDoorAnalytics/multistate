@@ -67,7 +67,7 @@ void predictms_core(`SS' S, `RS' from)
 		}
 	}
 	else {
-		for (std=1;std<=S.K;std++) {		
+		for (std=1;std<=S.K;std++) {
 			S.std = std
 			if (ptlosvisit) {
 				if 	(S.method==0 | S.method==3) {
