@@ -45,7 +45,7 @@ predictms , cr models(m1 m2) 		///
 timer off 1
 
 timer on 2
-// predictms , cr models(m1 m2) 		///
+// predictms , cr models(m1 m2) 	///
 // 	prob				///
 // 	at1(age 55) 			///
 // 	timevar(tvar) 			///

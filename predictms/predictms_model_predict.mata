@@ -50,7 +50,7 @@ void predictms_model_predict(`SS' S, `RS' from)
 
 void predictms_model_predict_stand(`SS' S, `RS' from)
 {
-	`PS' 	gml
+	`gml' 	gml
 	`RC'	t
 	`RS' 	Nt, Npostrans
 	
@@ -61,11 +61,11 @@ void predictms_model_predict_stand(`SS' S, `RS' from)
 	for (c=1; c<=Npostrans; c++) {
 		trans 	= postrans[c]
 		b	= predictms_get_b(S,trans)
-		Pmerlin	= predictms_merlin_setup_stand(S,b,Nt,trans)
+		gml	= *predictms_merlin_setup_stand(S,b,Nt,trans)
 		if (S.getsurvival) 	{
 			for (i=1;i<=Nt;i++) {
 				S.survival[i,c] = 	///
-				    predictms_analytic_s_p_stand(S,Pmerlin,t[i])
+				    predictms_analytic_s_p_stand(S,gml,t[i])
 			}	
 			if (min(S.predtime)==0) {
 				index0 	= selectindex(S.predtime:==0)
@@ -76,7 +76,7 @@ void predictms_model_predict_stand(`SS' S, `RS' from)
 		if (S.gethazard) {
 			for (i=1;i<=Nt;i++) {
 				S.hazard[i,c] = 	///
-				    predictms_analytic_h_p_stand(S,Pmerlin,t[i])
+				    predictms_analytic_h_p_stand(S,gml,t[i])
 			}	
 			
 		}	
@@ -84,10 +84,8 @@ void predictms_model_predict_stand(`SS' S, `RS' from)
 	}
 }
 
-`RS' predictms_analytic_h_p_stand(`SS' S, `Pcm' Pmerlin, `RS' t)
+`RS' predictms_analytic_h_p_stand(`SS' S, `gml' gml, `RS' t)
 {
-	`gml' gml
-	gml	= *Pmerlin[1]
 	pred 	= J(1,2,.)
 	ch	= (*gml.Pch[1])(gml,J(S.K,1,t))
 	_editmissing(ch,0)

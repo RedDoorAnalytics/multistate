@@ -58,7 +58,7 @@ void predictms_core(`SS' S, `RS' from)
 	if (S.gethazard) 	S.hazard   = J(S.obs,S.Nnextstates[from],0)
 	if (S.getsurvival)	S.survival = J(S.obs,S.Nnextstates[from],0)
 
-	if (S.standardise & S.method==2) {
+	if (S.standardise & S.method==2 & (S.nicode==1 | S.nicode==2)) {
 		if (ptlosvisit) {
 			predictms_analytic_standardise(S,from)
 		}

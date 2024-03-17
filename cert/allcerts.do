@@ -29,6 +29,10 @@ di as text "Running survival tests"
 
 do ./cert/survival.do
 
+di as text "Running CR tests"
+
+do ./cert/cr.do
+
 di as text "Running Markov tests"
 
 do ./cert/markov.do

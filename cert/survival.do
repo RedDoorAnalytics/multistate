@@ -31,10 +31,10 @@ predictms , singleevent models(m1) 	///
 rename _prob_at1* prob_at1*
 rename _los_at1* los_at1*
 
-assert (_prob_m1 - prob_at1_1_1)<1e-8 in 1/100
-assert (_prob_m2 - prob_at1_1_2)<1e-8 in 1/100
-assert (_los_m1 - los_at1_1_1)<1e-8 in 2/100	//missings in 1 at t=0
-assert (_los_m2 - los_at1_1_2)<1e-8 in 2/100
+assert abs(_prob_m1 - prob_at1_1_1)<1e-8 in 1/100
+assert abs(_prob_m2 - prob_at1_1_2)<1e-8 in 1/100
+assert abs(_los_m1 - los_at1_1_1)<1e-8 in 2/100	//missings in 1 at t=0
+assert abs(_los_m2 - los_at1_1_2)<1e-8 in 2/100
 
 //predictms using simulation
 predictms , singleevent models(m1) 	///
@@ -43,10 +43,10 @@ predictms , singleevent models(m1) 	///
 		prob los simulate 	///
 		n(1000000)	
 
-assert (_prob_m1 - _prob_at1_1_1)<1e-3 in 1/100
-assert (_prob_m2 - _prob_at1_1_2)<1e-3 in 1/100
-assert (_los_m1 - _los_at1_1_1)<1e-2 in 2/100
-assert (_los_m2 - _los_at1_1_2)<1e-2 in 2/100
+assert abs(_prob_m1 - _prob_at1_1_1)<1e-3 in 1/100
+assert abs(_prob_m2 - _prob_at1_1_2)<1e-3 in 1/100
+assert abs(_los_m1 - _los_at1_1_1)<1e-2 in 2/100
+assert abs(_los_m2 - _los_at1_1_2)<1e-2 in 2/100
 
 //==========================================================================//
 //standardised predictions 

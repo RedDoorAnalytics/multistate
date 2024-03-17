@@ -59,7 +59,7 @@ void predictms_analytic_standardise(`SS' S, `RS' from)
 	//predict
 	if 	(S.nicode==1) 	predictms_analytic_s_stand(S,Pmerlin)
 	else if (S.nicode==2) 	predictms_analytic_cr_stand(S,Pmerlin,Nobs)
-	else if (S.nicode==3) 	predictms_analytic_illd(S,from,Pmerlin,Nobs)
+	else if (S.nicode==3) 	predictms_analytic_illd_std(S,from,Pmerlin,Nobs)
 	else			predictms_analytic_extilld(S,from,Pmerlin,Nobs)
 
 	//tidyup

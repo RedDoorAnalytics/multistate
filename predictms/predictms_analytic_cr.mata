@@ -100,26 +100,25 @@ void predictms_analytic_cr(`SS' S, `Pcm' Pmerlin, `RS' Nobs)
 void predictms_analytic_cr_stand(`SS' S, `Pcm' Pmerlin, `RS' Nobs)
 {
 	`RC' 	t
+	`RS'	Nt
 	`gml' 	gml
 	`cgml' 	cgml
 	
 	t = S.predtime
+	Nt = rows(t)
 	cgml = J(S.Ntrans,1,gml)
 	for (c=1;c<=S.Ntrans;c++) cgml[c] = *Pmerlin[c]
 	
 	if (S.getprobs) {
-		for (i=1;i<=rows(t);i++) {
+		for (i=1;i<=Nt;i++) {
 			S.pt[i,] = predictms_analytic_cr_p_stand(S,cgml,Nobs,t[i])
 		}
 	}
 	
 	if (S.getlos | S.getrmst) {
-	
 		Nqp = S.chips
 		gq  = predictms_gq(Nqp)
-		Nt  = rows(t)
 		qp  = (t:-S.enter) :/ 2 :* J(Nt,1,gq[,1]') :+ (t:+S.enter) :/2
-		
 		for (i=1;i<=Nt;i++) {
 			res = J(1,S.Nstates,0)
 			for (j=1;j<=Nqp;j++) {
@@ -129,7 +128,6 @@ void predictms_analytic_cr_stand(`SS' S, `Pcm' Pmerlin, `RS' Nobs)
 			}
 			S.los[i,] = res :* (t[i]:-S.enter):/2
 		}	
-	
 	}	
 	
 	if (S.getrmst) S.rmst = S.los[,1]
@@ -147,7 +145,6 @@ void predictms_analytic_cr_stand(`SS' S, `Pcm' Pmerlin, `RS' Nobs)
 	
 	//get total S at qps
 	totalS 	= J(S.K,Nqp,0)
-	
 	
 	for (s=1;s<=S.Ntrans;s++) {
 		for (q=1; q<=Nqp; q++) {						
