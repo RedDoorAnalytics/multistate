@@ -6,7 +6,7 @@
 // --> build in 17
 //!!
 
-local drive /Users/Michael/My Drive/products/multistate
+local drive /Users/Michael/My Drive/software/multistate
 cd "`drive'"
 
 local includemata = 0
@@ -15,8 +15,8 @@ local includemata = 0
 
 //build SSC release
 
-//current version up is 4_4_0
-local newversion 4_4_1
+//current version up is 4_5_0
+local newversion 4_5_0
 if `includemata' {
 	local newversion `newversion'_mata
 }
