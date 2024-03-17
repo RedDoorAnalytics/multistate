@@ -20,7 +20,7 @@ adopath ++ "./msaj"
 adopath ++ "./graphms"
 clear all
 
-do ./build/buildmlib.do
+tr:do ./build/buildmlib.do
 mata mata clear
 
 clear all
