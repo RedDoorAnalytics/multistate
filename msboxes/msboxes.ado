@@ -166,7 +166,7 @@ program define msboxes, rclass
         
 // end state (assumes some ordering)
         tempvar maxeventtime totalmiss
-        qui bysort `id' (_trans): egen `maxeventtime' = max(_stop*_status )
+        qui bysort `id' (_trans): egen double `maxeventtime' = max(_stop*_status )
         qui bysort `id' (_trans): gen `endstate' = _to if _stop == `maxeventtime' & _status==1 
         qui bysort `id' (_trans): egen `totalmiss' = total(`endstate'==.)
         qui bysort `id' (_trans): replace `endstate' = _from if `totalmiss' == _N & _n==1
