@@ -1,6 +1,6 @@
 local drive /Users/Michael/My Drive/software/multistate
 
-use "`drive'/data/multistate_example",clear
+use "./data/multistate_example",clear
 set seed 98775
 keep if runiform()<0.2
 // qui {

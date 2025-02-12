@@ -20,15 +20,15 @@ mata:
 void predictms_analytic_extilld(`SS' S, `RS' from, `Pcm' Pmerlin, `RS' Nobs)
 {
 
-t = S.predtime
+	t = S.predtime
 	
 	if (S.getprobs) {
 		
-		if (from==1) 	pred = predictms_analytic_extilld_prob1(Pmerlin,t,S.enter)
-		else 			pred = predictms_analytic_extilld_prob2(Pmerlin,t,S.enter)
+		if (from==1) 	pred = predictms_analytic_extilld_prob1(Pmerlin,t,S.enter,S.chips)
+		else 		pred = predictms_analytic_extilld_prob2(Pmerlin,t,S.enter)
 		
 		if (S.standardise) 	S.pt = S.pt :+ pred
-		else 				S.pt = pred
+		else 			S.pt = pred
 	}
 	
 	if (S.getlos | S.getrmst) {
@@ -136,7 +136,7 @@ t = S.predtime
 	
 	Nobs 		= rows(t)
 	pred 		= J(Nobs,4,0)
-	ch			= (*gml.Pch[1])(gml,t)
+	ch		= (*gml.Pch[1])(gml,t)
 	_editmissing(ch,0)
 	pred[,2] 	= exp(-ch)
 	
